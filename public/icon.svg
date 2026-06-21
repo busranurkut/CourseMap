@@ -1,0 +1,7 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CourseMap">
+  <rect width="64" height="64" rx="14" fill="#1e44b8"/>
+  <path d="M18 44C18 44 22 30 32 30C42 30 46 20 46 20" stroke="white" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <circle cx="18" cy="44" r="5" fill="white"/>
+  <circle cx="32" cy="30" r="5" fill="#9ec1ff"/>
+  <circle cx="46" cy="20" r="5" fill="white"/>
+</svg>

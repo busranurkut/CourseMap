@@ -6,11 +6,7 @@ import { ReportView } from "@/components/report/report-view";
 
 export const dynamic = "force-dynamic";
 
-export default async function ReportPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ReportPage({ params }: { params: { id: string } }) {
   const evaluation = await prisma.evaluation.findUnique({
     where: { id: params.id },
   });

@@ -82,8 +82,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Checks whether what the unit teaches advances the documented goals of the course.",
           sourceAnchors: ["Richards2001", "Graves2000"],
-          evidencePrompt:
-            "Which course outcomes does this unit move learners towards?",
+          evidencePrompt: "Which course outcomes does this unit move learners towards?",
           adaptationPrompt:
             "If outcomes are loosely connected, suggest re-framing aims or adding an outcome-aligned task.",
         },
@@ -95,8 +94,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Considers whether the can-do targets implied by the unit match the intended proficiency band.",
           sourceAnchors: ["CEFR2001", "CEFR2020"],
-          evidencePrompt:
-            "Which CEFR can-do statements does the unit appear to target?",
+          evidencePrompt: "Which CEFR can-do statements does the unit appear to target?",
           adaptationPrompt:
             "If the level drifts, suggest adjusting task demands up or down to fit the descriptors.",
         },
@@ -108,8 +106,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Looks at whether new language builds on earlier learning and is revisited.",
           sourceAnchors: ["Richards2001", "Graves2000"],
-          evidencePrompt:
-            "What earlier language does the unit build on or recycle?",
+          evidencePrompt: "What earlier language does the unit build on or recycle?",
           adaptationPrompt:
             "If recycling is missing, suggest spaced review or a cumulative output task.",
         },
@@ -120,7 +117,12 @@ export const COURSEMAP_CORE: Framework = {
       name: "Language Level and Cognitive Load",
       description:
         "Vocabulary load, grammar demands, input difficulty, text density and learner manageability.",
-      sourceAnchors: ["Nation2013", "CEFR2001", "Tomlinson2011", "McDonoughShawMasuhara2013"],
+      sourceAnchors: [
+        "Nation2013",
+        "CEFR2001",
+        "Tomlinson2011",
+        "McDonoughShawMasuhara2013",
+      ],
       criteria: [
         {
           id: "level-cognitive-load-01",
@@ -156,8 +158,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Looks at sentence length, abstractness and the support available to process texts.",
           sourceAnchors: ["Nation2009", "Tomlinson2011"],
-          evidencePrompt:
-            "Where might text density slow your learners down?",
+          evidencePrompt: "Where might text density slow your learners down?",
           adaptationPrompt:
             "If density is high, suggest pre-reading support, chunking, or a graded alternative.",
         },
@@ -168,13 +169,17 @@ export const COURSEMAP_CORE: Framework = {
       name: "Skills Balance and Integration",
       description:
         "Balance and integration of reading, listening, speaking, writing, grammar, vocabulary and pronunciation in relation to course aims.",
-      sourceAnchors: ["Brown2007", "Nation2009", "McDonoughShawMasuhara2013", "Richards2001"],
+      sourceAnchors: [
+        "Brown2007",
+        "Nation2009",
+        "McDonoughShawMasuhara2013",
+        "Richards2001",
+      ],
       criteria: [
         {
           id: "skills-balance-01",
           category: "Skills Balance and Integration",
-          criterion:
-            "The balance of skills work reflects the priorities of your course.",
+          criterion: "The balance of skills work reflects the priorities of your course.",
           explanation:
             "Checks whether time-on-skill matches what the course actually values (e.g., speaking, academic reading).",
           sourceAnchors: ["Richards2001", "Brown2007"],
@@ -191,8 +196,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Considers whether, for example, reading feeds into speaking or writing.",
           sourceAnchors: ["Brown2007", "McDonoughShawMasuhara2013"],
-          evidencePrompt:
-            "Where does one skill feed naturally into another in the unit?",
+          evidencePrompt: "Where does one skill feed naturally into another in the unit?",
           adaptationPrompt:
             "If skills are siloed, suggest a bridging task that links input to production.",
         },
@@ -226,8 +230,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Evaluates whether learners exchange meanings, solve problems, express opinions or complete communicative tasks.",
           sourceAnchors: ["Ellis2003", "Nunan2004", "McDonoughShawMasuhara2013"],
-          evidencePrompt:
-            "Which task allows learners to communicate meaningfully?",
+          evidencePrompt: "Which task allows learners to communicate meaningfully?",
           adaptationPrompt:
             "If meaningful communication is weak, suggest a freer speaking, information-gap, problem-solving or discussion task.",
         },
@@ -252,8 +255,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Looks at whether learners get to produce extended, personalized language.",
           sourceAnchors: ["Brown2007", "Tomlinson2011"],
-          evidencePrompt:
-            "Where do learners produce extended or personalized language?",
+          evidencePrompt: "Where do learners produce extended or personalized language?",
           adaptationPrompt:
             "If production stays controlled, suggest a freer-production stage at the end.",
         },
@@ -274,8 +276,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Checks topic relevance and likely engagement for the specific group.",
           sourceAnchors: ["Tomlinson2011", "Cunningsworth1995"],
-          evidencePrompt:
-            "Which texts are likely to engage your learners, and why?",
+          evidencePrompt: "Which texts are likely to engage your learners, and why?",
           adaptationPrompt:
             "If a text is unengaging, suggest a more relevant alternative or a stronger framing task.",
         },
@@ -295,13 +296,11 @@ export const COURSEMAP_CORE: Framework = {
         {
           id: "text-quality-03",
           category: "Reading and Listening Text Quality",
-          criterion:
-            "Tasks built on the texts go beyond surface comprehension.",
+          criterion: "Tasks built on the texts go beyond surface comprehension.",
           explanation:
             "Looks at whether learners infer, evaluate or use the text rather than only locating facts.",
           sourceAnchors: ["Nation2009", "Tomlinson2011"],
-          evidencePrompt:
-            "Do follow-up tasks ask for more than locating information?",
+          evidencePrompt: "Do follow-up tasks ask for more than locating information?",
           adaptationPrompt:
             "If tasks are comprehension-only, suggest inference, response or text-to-task transfer activities.",
         },
@@ -312,15 +311,19 @@ export const COURSEMAP_CORE: Framework = {
       name: "Task Sequencing and Lesson Flow",
       description:
         "Logical movement from input to practice to freer use, with recycling, scaffolding and progression.",
-      sourceAnchors: ["McDonoughShawMasuhara2013", "Richards2001", "Graves2000", "Tomlinson2011"],
+      sourceAnchors: [
+        "McDonoughShawMasuhara2013",
+        "Richards2001",
+        "Graves2000",
+        "Tomlinson2011",
+      ],
       criteria: [
         {
           id: "task-sequencing-01",
           category: "Task Sequencing and Lesson Flow",
           criterion:
             "Activities move logically from input to controlled practice to freer production.",
-          explanation:
-            "Checks the overall arc of the unit for coherent staging.",
+          explanation: "Checks the overall arc of the unit for coherent staging.",
           sourceAnchors: ["McDonoughShawMasuhara2013", "Tomlinson2011"],
           evidencePrompt:
             "How does the unit move from presentation to practice to production?",
@@ -335,8 +338,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Considers whether the step-up in demand between activities is manageable.",
           sourceAnchors: ["Graves2000", "Richards2001"],
-          evidencePrompt:
-            "Where might the jump between two activities be too large?",
+          evidencePrompt: "Where might the jump between two activities be too large?",
           adaptationPrompt:
             "If a jump is too steep, suggest an intermediate scaffolding step.",
         },
@@ -345,11 +347,9 @@ export const COURSEMAP_CORE: Framework = {
           category: "Task Sequencing and Lesson Flow",
           criterion:
             "The unit recycles target language across stages rather than dropping it.",
-          explanation:
-            "Looks at whether new items reappear in later tasks.",
+          explanation: "Looks at whether new items reappear in later tasks.",
           sourceAnchors: ["Richards2001", "Nation2013"],
-          evidencePrompt:
-            "Where is target language reused later in the unit?",
+          evidencePrompt: "Where is target language reused later in the unit?",
           adaptationPrompt:
             "If recycling is weak, suggest a cumulative end task that reuses the language.",
         },
@@ -360,7 +360,12 @@ export const COURSEMAP_CORE: Framework = {
       name: "Vocabulary and Grammar Treatment",
       description:
         "Recycling, contextualization, form–meaning–use balance, noticing, and practice opportunities.",
-      sourceAnchors: ["Nation2013", "Brown2007", "Richards2001", "McDonoughShawMasuhara2013"],
+      sourceAnchors: [
+        "Nation2013",
+        "Brown2007",
+        "Richards2001",
+        "McDonoughShawMasuhara2013",
+      ],
       criteria: [
         {
           id: "vocab-grammar-01",
@@ -370,21 +375,18 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Checks whether learners meet language in use before manipulating it.",
           sourceAnchors: ["Nation2013", "McDonoughShawMasuhara2013"],
-          evidencePrompt:
-            "How is target language first introduced in context?",
+          evidencePrompt: "How is target language first introduced in context?",
           adaptationPrompt:
             "If context is missing, suggest a noticing task that situates the language.",
         },
         {
           id: "vocab-grammar-02",
           category: "Vocabulary and Grammar Treatment",
-          criterion:
-            "Practice covers form, meaning and use rather than form alone.",
+          criterion: "Practice covers form, meaning and use rather than form alone.",
           explanation:
             "Considers whether learners work on all three dimensions of the language.",
           sourceAnchors: ["Nation2013", "Brown2007"],
-          evidencePrompt:
-            "Which exercises address meaning and use, not just form?",
+          evidencePrompt: "Which exercises address meaning and use, not just form?",
           adaptationPrompt:
             "If practice is form-heavy, suggest a meaning- or use-focused activity.",
         },
@@ -393,11 +395,9 @@ export const COURSEMAP_CORE: Framework = {
           category: "Vocabulary and Grammar Treatment",
           criterion:
             "There are opportunities to recycle vocabulary and grammar productively.",
-          explanation:
-            "Looks at whether language is reused in output, aiding retention.",
+          explanation: "Looks at whether language is reused in output, aiding retention.",
           sourceAnchors: ["Nation2013", "Richards2001"],
-          evidencePrompt:
-            "Where do learners reuse target language in their own output?",
+          evidencePrompt: "Where do learners reuse target language in their own output?",
           adaptationPrompt:
             "If recycling is thin, suggest a vocabulary-recycling or scaffolded writing task.",
         },
@@ -426,23 +426,19 @@ export const COURSEMAP_CORE: Framework = {
         {
           id: "engagement-02",
           category: "Engagement, Relevance, and Motivation",
-          criterion:
-            "Tasks invite personalization and learner voice.",
+          criterion: "Tasks invite personalization and learner voice.",
           explanation:
             "Considers whether learners bring their own experience and opinions.",
           sourceAnchors: ["Tomlinson2011", "Graves2000"],
-          evidencePrompt:
-            "Where can learners bring their own ideas or experience?",
+          evidencePrompt: "Where can learners bring their own ideas or experience?",
           adaptationPrompt:
             "If personalization is absent, suggest a discussion or opinion stage.",
         },
         {
           id: "engagement-03",
           category: "Engagement, Relevance, and Motivation",
-          criterion:
-            "The unit is practical to run in your classroom conditions.",
-          explanation:
-            "Looks at class size, equipment and timing realities.",
+          criterion: "The unit is practical to run in your classroom conditions.",
+          explanation: "Looks at class size, equipment and timing realities.",
           sourceAnchors: ["McGrath2002", "Cunningsworth1995"],
           evidencePrompt:
             "Which activities may be hard to run given your class size or constraints?",
@@ -456,7 +452,12 @@ export const COURSEMAP_CORE: Framework = {
       name: "Cultural, Social, and Inclusive Content",
       description:
         "Cultural representation, bias, inclusivity, appropriateness and local adaptability.",
-      sourceAnchors: ["Cunningsworth1995", "McGrath2002", "Tomlinson2011", "MishanTimmis2015"],
+      sourceAnchors: [
+        "Cunningsworth1995",
+        "McGrath2002",
+        "Tomlinson2011",
+        "MishanTimmis2015",
+      ],
       criteria: [
         {
           id: "cultural-inclusive-01",
@@ -474,26 +475,22 @@ export const COURSEMAP_CORE: Framework = {
         {
           id: "cultural-inclusive-02",
           category: "Cultural, Social, and Inclusive Content",
-          criterion:
-            "Representation is balanced and avoids stereotypes or bias.",
+          criterion: "Representation is balanced and avoids stereotypes or bias.",
           explanation:
             "Considers gender, role and cultural representation across the unit.",
           sourceAnchors: ["McGrath2002", "Tomlinson2011"],
-          evidencePrompt:
-            "How balanced is the representation of people and cultures?",
+          evidencePrompt: "How balanced is the representation of people and cultures?",
           adaptationPrompt:
             "If representation is narrow, suggest adding diverse examples or perspectives.",
         },
         {
           id: "cultural-inclusive-03",
           category: "Cultural, Social, and Inclusive Content",
-          criterion:
-            "Content can be localized so learners see themselves in it.",
+          criterion: "Content can be localized so learners see themselves in it.",
           explanation:
             "Looks at how easily examples can be adapted to the learners' world.",
           sourceAnchors: ["MishanTimmis2015", "Tomlinson2011"],
-          evidencePrompt:
-            "How easily can examples be localized to your learners' lives?",
+          evidencePrompt: "How easily can examples be localized to your learners' lives?",
           adaptationPrompt:
             "If localization is hard, suggest a parallel local example or task.",
         },
@@ -514,8 +511,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Checks whether task types prepare learners for what is actually tested.",
           sourceAnchors: ["Brown2007", "Richards2001"],
-          evidencePrompt:
-            "Which tasks resemble your exam or assessment formats?",
+          evidencePrompt: "Which tasks resemble your exam or assessment formats?",
           adaptationPrompt:
             "If formats differ, suggest one exam-style task aligned to your assessment.",
         },
@@ -527,8 +523,7 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Considers whether the skills practiced match the constructs assessed.",
           sourceAnchors: ["CEFR2001", "Graves2000"],
-          evidencePrompt:
-            "Which assessed competences does the unit build?",
+          evidencePrompt: "Which assessed competences does the unit build?",
           adaptationPrompt:
             "If a competence is under-served, suggest a targeted practice task.",
         },
@@ -537,11 +532,9 @@ export const COURSEMAP_CORE: Framework = {
           category: "Assessment and Exam Alignment",
           criterion:
             "There is some opportunity for feedback or self-assessment toward the outcomes.",
-          explanation:
-            "Looks at whether learners can gauge progress against goals.",
+          explanation: "Looks at whether learners can gauge progress against goals.",
           sourceAnchors: ["Graves2000", "CEFR2020"],
-          evidencePrompt:
-            "Where can learners get feedback or check their own progress?",
+          evidencePrompt: "Where can learners get feedback or check their own progress?",
           adaptationPrompt:
             "If feedback is missing, suggest a checklist, rubric or self-assessment step.",
         },
@@ -552,7 +545,12 @@ export const COURSEMAP_CORE: Framework = {
       name: "Adaptability and Teacher Usability",
       description:
         "Whether the unit can be supplemented, shortened, reordered, localized, simplified or extended.",
-      sourceAnchors: ["McGrath2002", "Tomlinson2013", "McDonoughShawMasuhara2013", "Cunningsworth1995"],
+      sourceAnchors: [
+        "McGrath2002",
+        "Tomlinson2013",
+        "McDonoughShawMasuhara2013",
+        "Cunningsworth1995",
+      ],
       criteria: [
         {
           id: "adaptability-01",
@@ -575,21 +573,17 @@ export const COURSEMAP_CORE: Framework = {
           explanation:
             "Considers whether aims and procedures are transparent for adaptation.",
           sourceAnchors: ["Cunningsworth1995", "Tomlinson2013"],
-          evidencePrompt:
-            "Are the aims of each section clear enough to adapt?",
+          evidencePrompt: "Are the aims of each section clear enough to adapt?",
           adaptationPrompt:
             "If aims are unclear, suggest restating the aim before adapting a task.",
         },
         {
           id: "adaptability-03",
           category: "Adaptability and Teacher Usability",
-          criterion:
-            "The unit can be localized or extended for your specific learners.",
-          explanation:
-            "Looks at headroom for extension or local tailoring.",
+          criterion: "The unit can be localized or extended for your specific learners.",
+          explanation: "Looks at headroom for extension or local tailoring.",
           sourceAnchors: ["Tomlinson2013", "McGrath2002"],
-          evidencePrompt:
-            "Where is there room to extend or localize the unit?",
+          evidencePrompt: "Where is there room to extend or localize the unit?",
           adaptationPrompt:
             "If extension is needed, suggest an optional extension or mini-project.",
         },

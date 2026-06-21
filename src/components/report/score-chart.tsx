@@ -51,7 +51,9 @@ export function ScoreChart({ categoryScores }: { categoryScores: CategoryScore[]
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="h-80 w-full">
-        <p className="mb-2 text-sm font-medium text-muted-foreground">Score profile (radar)</p>
+        <p className="mb-2 text-sm font-medium text-muted-foreground">
+          Score profile (radar)
+        </p>
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart data={data} outerRadius="70%">
             <PolarGrid />
@@ -73,7 +75,9 @@ export function ScoreChart({ categoryScores }: { categoryScores: CategoryScore[]
       </div>
 
       <div className="h-80 w-full">
-        <p className="mb-2 text-sm font-medium text-muted-foreground">Category scores (bar)</p>
+        <p className="mb-2 text-sm font-medium text-muted-foreground">
+          Category scores (bar)
+        </p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 16, right: 16 }}>
             <XAxis type="number" domain={[0, 5]} tick={{ fontSize: 10 }} />

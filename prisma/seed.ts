@@ -113,7 +113,11 @@ async function main() {
     },
   });
 
-  console.log("Seeded 1 sample evaluation:", input.unit.coursebookName, input.unit.unitTitle);
+  console.log(
+    "Seeded 1 sample evaluation:",
+    input.unit.coursebookName,
+    input.unit.unitTitle,
+  );
 }
 
 main()

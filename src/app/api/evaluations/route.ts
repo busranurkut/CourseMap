@@ -4,6 +4,7 @@ import { toSummary } from "@/lib/db/serialize";
 import { evaluationFormSchema } from "@/lib/validation";
 import { buildEvaluationInput } from "@/lib/report/build-input";
 import { generateReport } from "@/lib/report/generate";
+import { checkRateLimit, maybeSweep } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,10 @@ export async function GET() {
 
 // POST /api/evaluations — validate, generate report, persist, return the record.
 export async function POST(req: NextRequest) {
+  maybeSweep();
+  const limited = checkRateLimit(req, { scope: "create", limit: 8, windowMs: 60_000 });
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await req.json();

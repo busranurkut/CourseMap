@@ -8,8 +8,15 @@ import {
   BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { EthicsNote } from "@/components/ethics-note";
+import { Logo } from "@/components/logo";
 
 const features = [
   {
@@ -44,21 +51,25 @@ const steps = [
 export default function HomePage() {
   return (
     <div className="space-y-12">
-      <section className="grid items-center gap-8 md:grid-cols-2">
-        <div className="space-y-6">
+      <section className="relative grid items-center gap-8 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-accent/60 via-card to-card p-6 sm:p-10 md:grid-cols-2">
+        <div className="animate-fade-in-up space-y-6">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-            <BookOpen className="h-3.5 w-3.5" /> Literature-grounded ELT materials evaluation
+            <BookOpen className="h-3.5 w-3.5" /> Literature-grounded ELT materials
+            evaluation
           </span>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            CourseMap
-          </h1>
+          <div className="flex items-center gap-3">
+            <Logo className="h-12 w-12" />
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+              CourseMap
+            </h1>
+          </div>
           <p className="text-xl font-medium text-primary">
             From coursebook evaluation to actionable adaptation.
           </p>
           <p className="max-w-prose text-muted-foreground">
             CourseMap helps English teachers, materials developers and prep-school
-            coordinators evaluate a coursebook unit against their teaching context,
-            then turns the evaluation into a practical, documented adaptation plan.
+            coordinators evaluate a coursebook unit against their teaching context, then
+            turns the evaluation into a practical, documented adaptation plan.
           </p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">

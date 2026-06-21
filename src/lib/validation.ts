@@ -38,33 +38,46 @@ export const categoryRatingSchema = z.object({
   adaptationNote: z.string().default(""),
 });
 
+// Length caps protect the database and the AI request from oversized input.
+const SHORT = 200;
+const MED = 2000;
+const LONG = 20000;
+
+const shortText = (max = SHORT) =>
+  z.string().max(max, `Please keep this under ${max} characters.`);
+
 export const evaluationFormSchema = z.object({
   // Teaching context
-  institutionType: z.string().min(1, "Please choose an institution type."),
-  learnerLevel: z.string().min(1, "Please choose a learner level."),
-  learnerProfile: z.string().default(""),
+  institutionType: z.string().min(1, "Please choose an institution type.").max(SHORT),
+  learnerLevel: z.string().min(1, "Please choose a learner level.").max(SHORT),
+  learnerProfile: shortText(MED).default(""),
   weeklyHours: z
-    .union([z.coerce.number().min(0).max(80), z.literal("")])
-    .transform((v) => (v === "" ? null : Number(v)))
-    .nullable()
+    .preprocess(
+      (v) => (v === "" || v === null || v === undefined ? null : v),
+      z.coerce.number().min(0).max(80).nullable(),
+    )
     .default(null),
-  courseDuration: z.string().default(""),
-  courseGoal: z.string().min(1, "Please choose a course goal."),
-  examAlignment: z.string().default(""),
-  learnerNeeds: z.string().default(""),
-  constraints: z.string().default(""),
+  courseDuration: shortText().default(""),
+  courseGoal: z.string().min(1, "Please choose a course goal.").max(SHORT),
+  examAlignment: shortText(MED).default(""),
+  learnerNeeds: shortText(MED).default(""),
+  constraints: shortText(MED).default(""),
 
   // Coursebook unit information
-  coursebookName: z.string().min(1, "Coursebook name is required."),
-  publisher: z.string().default(""),
-  claimedLevel: z.string().default(""),
-  unitTitle: z.string().min(1, "Unit number/title is required."),
-  unitSkills: z.array(z.string()).default([]),
-  unitTopic: z.string().default(""),
+  coursebookName: z.string().min(1, "Coursebook name is required.").max(SHORT),
+  publisher: shortText().default(""),
+  claimedLevel: shortText(50).default(""),
+  unitTitle: z.string().min(1, "Unit number/title is required.").max(SHORT),
+  unitSkills: z.array(z.string().max(SHORT)).max(20).default([]),
+  unitTopic: shortText().default(""),
   unitText: z
     .string()
-    .min(20, "Please paste a unit summary or short description (min 20 characters)."),
-  teacherNotes: z.string().default(""),
+    .min(20, "Please paste a unit summary or short description (min 20 characters).")
+    .max(
+      LONG,
+      "That's very long — please paste a unit summary, not an entire unit (max 20,000 characters).",
+    ),
+  teacherNotes: shortText(MED).default(""),
 
   // Ratings keyed by categoryId
   ratings: z.record(z.string(), categoryRatingSchema),

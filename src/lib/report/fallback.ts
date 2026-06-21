@@ -77,7 +77,8 @@ function strongestCategories(profile: ScoreProfile, n: number) {
 
 function supplementaryTasks(input: EvaluationInput): SupplementaryTask[] {
   const topic = input.unit.unitTopic || input.unit.unitTitle || "the unit topic";
-  const level = input.context.learnerLevel || input.unit.claimedLevel || "the target level";
+  const level =
+    input.context.learnerLevel || input.unit.claimedLevel || "the target level";
 
   const speakingTask: SupplementaryTask = {
     title: `Information-gap discussion: ${topic}`,
@@ -199,7 +200,9 @@ export function generateFallbackReport(input: EvaluationInput): GeneratedReport 
 
   const implementationNotes = [
     `Allow time for the added freer-production stage; consider setting some writing for homework given your ${
-      input.context.weeklyHours ? `${input.context.weeklyHours} weekly hours` : "available hours"
+      input.context.weeklyHours
+        ? `${input.context.weeklyHours} weekly hours`
+        : "available hours"
     }.`,
     "Recycle target vocabulary in the final task to support retention.",
     input.context.constraints

@@ -4,10 +4,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import { RatingGroup } from "@/components/forms/rating-group";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -50,7 +58,10 @@ export interface EvaluationFormProps {
   evaluationId?: string;
 }
 
-export function EvaluationForm({ initialValues, evaluationId }: EvaluationFormProps = {}) {
+export function EvaluationForm({
+  initialValues,
+  evaluationId,
+}: EvaluationFormProps = {}) {
   const router = useRouter();
   const isEditing = Boolean(evaluationId);
   const [submitting, setSubmitting] = useState(false);
@@ -114,16 +125,80 @@ export function EvaluationForm({ initialValues, evaluationId }: EvaluationFormPr
         throw new Error(data?.error || `Request failed (${res.status}).`);
       }
       const data = await res.json();
+      if (data.usedFallback && data.aiError) {
+        toast.info("AI was unavailable, so a template-based report was generated.");
+      } else {
+        toast.success(isEditing ? "Report updated." : "Report generated.");
+      }
       router.push(`/evaluations/${data.id ?? evaluationId}`);
       router.refresh();
     } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+      const msg = err instanceof Error ? err.message : "Something went wrong.";
+      setServerError(msg);
+      toast.error(msg);
       setSubmitting(false);
     }
   }
 
+  function onInvalid() {
+    toast.error("Please fix the highlighted fields, then generate the report.");
+  }
+
+  // Live progress for the sticky indicator.
+  const all = watch();
+  const requiredChecks = [
+    Boolean(all.institutionType),
+    Boolean(all.learnerLevel),
+    Boolean(all.courseGoal),
+    Boolean(all.coursebookName),
+    Boolean(all.unitTitle),
+    (all.unitText?.trim().length ?? 0) >= 20,
+  ];
+  const requiredDone = requiredChecks.filter(Boolean).length;
+  const totalCategories = COURSEMAP_CORE.categories.length;
+  const ratedCategories = COURSEMAP_CORE.categories.filter((c) => {
+    const r = all.ratings?.[c.id]?.ratings ?? {};
+    return Object.values(r).some((v) => Number(v) >= 1);
+  }).length;
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+      {/* Sticky progress */}
+      <div className="no-print sticky top-[57px] z-20 -mx-1 rounded-lg border border-border bg-card/95 px-4 py-3 shadow-sm backdrop-blur">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle2
+              className={cn(
+                "h-4 w-4",
+                requiredDone === requiredChecks.length
+                  ? "text-emerald-600"
+                  : "text-muted-foreground",
+              )}
+            />
+            <span className="text-muted-foreground">
+              Required fields:{" "}
+              <span className="font-medium text-foreground">
+                {requiredDone}/{requiredChecks.length}
+              </span>
+            </span>
+          </div>
+          <div className="flex flex-1 items-center gap-3">
+            <span className="whitespace-nowrap text-muted-foreground">
+              Categories rated:{" "}
+              <span className="font-medium text-foreground">
+                {ratedCategories}/{totalCategories}
+              </span>
+            </span>
+            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-all"
+                style={{ width: `${(ratedCategories / totalCategories) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* A. Teaching context */}
       <Card>
         <CardHeader>
@@ -243,11 +318,19 @@ export function EvaluationForm({ initialValues, evaluationId }: EvaluationFormPr
           </div>
           <div>
             <Label htmlFor="claimedLevel">Level claimed by publisher</Label>
-            <Input id="claimedLevel" placeholder="e.g. B1" {...register("claimedLevel")} />
+            <Input
+              id="claimedLevel"
+              placeholder="e.g. B1"
+              {...register("claimedLevel")}
+            />
           </div>
           <div>
             <Label htmlFor="unitTitle">Unit number / title *</Label>
-            <Input id="unitTitle" placeholder="e.g. Unit 4: Urban Life" {...register("unitTitle")} />
+            <Input
+              id="unitTitle"
+              placeholder="e.g. Unit 4: Urban Life"
+              {...register("unitTitle")}
+            />
             <FieldError message={errors.unitTitle?.message} />
           </div>
           <div className="sm:col-span-2">
@@ -336,35 +419,20 @@ export function EvaluationForm({ initialValues, evaluationId }: EvaluationFormPr
                     className="flex flex-col gap-2 border-t border-border pt-3 sm:flex-row sm:items-start sm:justify-between"
                   >
                     <div className="sm:pr-4">
-                      <p className="text-sm font-medium text-foreground">{cr.criterion}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {cr.criterion}
+                      </p>
                       <p className="text-xs text-muted-foreground">{cr.explanation}</p>
                     </div>
                     <Controller
                       control={control}
                       name={`ratings.${cat.id}.ratings.${cr.id}` as const}
                       render={({ field }) => (
-                        <div className="flex shrink-0 gap-1" role="radiogroup" aria-label={cr.criterion}>
-                          {[1, 2, 3, 4, 5].map((n) => {
-                            const active = Number(field.value) === n;
-                            return (
-                              <button
-                                key={n}
-                                type="button"
-                                aria-label={`Rate ${n}`}
-                                aria-pressed={active}
-                                onClick={() => field.onChange(active ? undefined : n)}
-                                className={cn(
-                                  "h-8 w-8 rounded-md border text-sm font-medium transition-colors",
-                                  active
-                                    ? "border-primary bg-primary text-primary-foreground"
-                                    : "border-input bg-card text-muted-foreground hover:bg-muted",
-                                )}
-                              >
-                                {n}
-                              </button>
-                            );
-                          })}
-                        </div>
+                        <RatingGroup
+                          label={cr.criterion}
+                          value={field.value ? Number(field.value) : undefined}
+                          onChange={(v) => field.onChange(v)}
+                        />
                       )}
                     />
                   </div>

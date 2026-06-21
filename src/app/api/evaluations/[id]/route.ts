@@ -3,14 +3,16 @@ import { prisma } from "@/lib/db/prisma";
 import { evaluationFormSchema } from "@/lib/validation";
 import { buildEvaluationInput } from "@/lib/report/build-input";
 import { generateReport } from "@/lib/report/generate";
+import { checkRateLimit, maybeSweep } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 // PUT /api/evaluations/:id — re-validate, regenerate the report, and update the record.
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+  maybeSweep();
+  const limited = checkRateLimit(req, { scope: "update", limit: 8, windowMs: 60_000 });
+  if (limited) return limited;
+
   const existing = await prisma.evaluation.findUnique({ where: { id: params.id } });
   if (!existing) {
     return NextResponse.json({ error: "Evaluation not found." }, { status: 404 });
@@ -72,10 +74,10 @@ export async function PUT(
 }
 
 // DELETE /api/evaluations/:id
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const limited = checkRateLimit(req, { scope: "delete", limit: 20, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
     await prisma.evaluation.delete({ where: { id: params.id } });
     return NextResponse.json({ ok: true });

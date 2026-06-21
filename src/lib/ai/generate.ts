@@ -16,7 +16,8 @@ function parseJsonObject(text: string): unknown {
   const candidate = fenceMatch ? fenceMatch[1] : trimmed;
   const start = candidate.indexOf("{");
   const end = candidate.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("No JSON object found in model output.");
+  if (start === -1 || end === -1)
+    throw new Error("No JSON object found in model output.");
   return JSON.parse(candidate.slice(start, end + 1));
 }
 

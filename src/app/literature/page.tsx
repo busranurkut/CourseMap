@@ -40,16 +40,14 @@ export default function LiteraturePage() {
         <CardContent className="space-y-3 text-sm text-foreground">
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              The criteria are <strong>original and synthesized</strong>, not copied
-              from any copyrighted checklist.
+              The criteria are <strong>original and synthesized</strong>, not copied from
+              any copyrighted checklist.
             </li>
             <li>
               Evaluation is <strong>decision support</strong>, not an absolute verdict.
             </li>
             <li>Teachers should always apply professional judgment.</li>
-            <li>
-              AI-generated suggestions should be reviewed before classroom use.
-            </li>
+            <li>AI-generated suggestions should be reviewed before classroom use.</li>
           </ul>
         </CardContent>
       </Card>
@@ -86,9 +84,9 @@ export default function LiteraturePage() {
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Author attributions are used to indicate the principles behind each
-        criterion. CourseMap does not reproduce text from these sources and does not
-        fabricate quotations or page numbers.
+        Author attributions are used to indicate the principles behind each criterion.
+        CourseMap does not reproduce text from these sources and does not fabricate
+        quotations or page numbers.
       </p>
     </div>
   );

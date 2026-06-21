@@ -43,7 +43,21 @@ re-deploys automatically.
    postgresql://USER:PASSWORD@ep-xxxx.region.aws.neon.tech/neondb?sslmode=require
    ```
 
+> **Use the pooled connection for serverless.** On the Neon connection screen,
+> enable **"Pooled connection"** — the hostname will contain `-pooler`
+> (e.g. `ep-xxxx-pooler.region.aws.neon.tech`). Serverless platforms like Vercel
+> open many short-lived connections, and the pooler prevents you from exhausting
+> the database's connection limit under traffic. Use this pooled string for
+> `DATABASE_URL` in both Vercel and local `.env`.
+
 Keep this handy — you'll paste it into Vercel, and into your local `.env`.
+
+### Database migrations
+
+This project uses Prisma **migrations** (in `prisma/migrations/`). On Vercel the
+`vercel-build` script runs `prisma migrate deploy` automatically, so any future
+schema change you commit is applied to the database on the next deploy — no manual
+step. Locally, apply migrations with `npm run db:migrate`.
 
 ---
 

@@ -48,9 +48,7 @@ export function computeScoreProfile(
 
   const rated = categoryScores.filter((c) => c.score > 0);
   const overallScore =
-    rated.length === 0
-      ? 0
-      : round(rated.reduce((a, c) => a + c.score, 0) / rated.length);
+    rated.length === 0 ? 0 : round(rated.reduce((a, c) => a + c.score, 0) / rated.length);
 
   return {
     categoryScores,

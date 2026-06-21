@@ -24,9 +24,9 @@ function scoreVariant(score: number): "muted" | "danger" | "warning" | "success"
 }
 
 export default async function HistoryPage() {
-  const rows = (
-    await prisma.evaluation.findMany({ orderBy: { createdAt: "desc" } })
-  ).map(toSummary);
+  const rows = (await prisma.evaluation.findMany({ orderBy: { createdAt: "desc" } })).map(
+    toSummary,
+  );
 
   return (
     <div className="space-y-6">
@@ -90,7 +90,10 @@ export default async function HistoryPage() {
                         )}
                       </td>
                       <td className="px-4 py-3">
-                        <HistoryRowActions id={r.id} />
+                        <HistoryRowActions
+                          id={r.id}
+                          label={`${r.coursebookName} — ${r.unitTitle}`}
+                        />
                       </td>
                     </tr>
                   ))}

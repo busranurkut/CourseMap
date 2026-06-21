@@ -36,10 +36,7 @@ You must respond with a single valid JSON object and nothing else (no markdown, 
 
 Provide categoryFeedback for every category supplied. Provide at least 2 supplementaryTasks. For sourceAnchors, reuse the author short-labels given for each category.`;
 
-export function buildUserPrompt(
-  input: EvaluationInput,
-  profile: ScoreProfile,
-): string {
+export function buildUserPrompt(input: EvaluationInput, profile: ScoreProfile): string {
   const ctx = input.context;
   const unit = input.unit;
 

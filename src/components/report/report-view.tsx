@@ -192,14 +192,38 @@ export function ReportView({
             <CardTitle className="text-base">Teaching context</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
-            <p><span className="text-muted-foreground">Institution:</span> {input.context.institutionType}</p>
-            <p><span className="text-muted-foreground">Level:</span> {input.context.learnerLevel}</p>
-            <p><span className="text-muted-foreground">Weekly hours:</span> {input.context.weeklyHours ?? "—"}</p>
-            <p><span className="text-muted-foreground">Duration:</span> {input.context.courseDuration || "—"}</p>
-            <p><span className="text-muted-foreground">Goal:</span> {input.context.courseGoal}</p>
-            <p><span className="text-muted-foreground">Exam alignment:</span> {input.context.examAlignment || "—"}</p>
-            <p><span className="text-muted-foreground">Needs:</span> {input.context.learnerNeeds || "—"}</p>
-            <p><span className="text-muted-foreground">Constraints:</span> {input.context.constraints || "—"}</p>
+            <p>
+              <span className="text-muted-foreground">Institution:</span>{" "}
+              {input.context.institutionType}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Level:</span>{" "}
+              {input.context.learnerLevel}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Weekly hours:</span>{" "}
+              {input.context.weeklyHours ?? "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Duration:</span>{" "}
+              {input.context.courseDuration || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Goal:</span>{" "}
+              {input.context.courseGoal}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Exam alignment:</span>{" "}
+              {input.context.examAlignment || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Needs:</span>{" "}
+              {input.context.learnerNeeds || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Constraints:</span>{" "}
+              {input.context.constraints || "—"}
+            </p>
           </CardContent>
         </Card>
         <Card className="print-card">
@@ -207,12 +231,29 @@ export function ReportView({
             <CardTitle className="text-base">Coursebook unit</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
-            <p><span className="text-muted-foreground">Coursebook:</span> {input.unit.coursebookName}</p>
-            <p><span className="text-muted-foreground">Publisher:</span> {input.unit.publisher || "—"}</p>
-            <p><span className="text-muted-foreground">Claimed level:</span> {input.unit.claimedLevel || "—"}</p>
-            <p><span className="text-muted-foreground">Unit:</span> {input.unit.unitTitle}</p>
-            <p><span className="text-muted-foreground">Topic:</span> {input.unit.unitTopic || "—"}</p>
-            <p><span className="text-muted-foreground">Skills:</span> {input.unit.unitSkills.join(", ") || "—"}</p>
+            <p>
+              <span className="text-muted-foreground">Coursebook:</span>{" "}
+              {input.unit.coursebookName}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Publisher:</span>{" "}
+              {input.unit.publisher || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Claimed level:</span>{" "}
+              {input.unit.claimedLevel || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Unit:</span> {input.unit.unitTitle}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Topic:</span>{" "}
+              {input.unit.unitTopic || "—"}
+            </p>
+            <p>
+              <span className="text-muted-foreground">Skills:</span>{" "}
+              {input.unit.unitSkills.join(", ") || "—"}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -309,13 +350,17 @@ export function ReportView({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">
-              <p><span className="text-muted-foreground">Aim:</span> {t.aim}</p>
+              <p>
+                <span className="text-muted-foreground">Aim:</span> {t.aim}
+              </p>
               <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                 <span>Level: {t.level}</span>
                 <span>Time: {t.time}</span>
                 {t.interaction && <span>Interaction: {t.interaction}</span>}
               </div>
-              <p><span className="text-muted-foreground">Materials:</span> {t.materials}</p>
+              <p>
+                <span className="text-muted-foreground">Materials:</span> {t.materials}
+              </p>
               <div>
                 <p className="text-muted-foreground">Procedure:</p>
                 <ol className="mt-1 list-decimal space-y-1 pl-5">
@@ -325,10 +370,16 @@ export function ReportView({
                 </ol>
               </div>
               {t.differentiation && (
-                <p><span className="text-muted-foreground">Differentiation:</span> {t.differentiation}</p>
+                <p>
+                  <span className="text-muted-foreground">Differentiation:</span>{" "}
+                  {t.differentiation}
+                </p>
               )}
               {t.teacherNotes && (
-                <p><span className="text-muted-foreground">Teacher notes:</span> {t.teacherNotes}</p>
+                <p>
+                  <span className="text-muted-foreground">Teacher notes:</span>{" "}
+                  {t.teacherNotes}
+                </p>
               )}
             </CardContent>
           </Card>
@@ -347,7 +398,9 @@ export function ReportView({
         </Card>
         <Card className="print-card">
           <CardHeader>
-            <CardTitle className="text-base">Limitations & professional judgment</CardTitle>
+            <CardTitle className="text-base">
+              Limitations & professional judgment
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <Bullets items={report.limitations} />

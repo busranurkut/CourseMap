@@ -13,11 +13,7 @@ export const metadata: Metadata = {
   title: "Edit evaluation — CourseMap",
 };
 
-export default async function EditEvaluationPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditEvaluationPage({ params }: { params: { id: string } }) {
   const evaluation = await prisma.evaluation.findUnique({
     where: { id: params.id },
   });
@@ -36,8 +32,7 @@ export default async function EditEvaluationPage({
         </Link>
         <h1 className="text-3xl font-bold tracking-tight">Edit evaluation</h1>
         <p className="max-w-prose text-muted-foreground">
-          Update the context, unit, or ratings and save to regenerate the report.
-          {" "}
+          Update the context, unit, or ratings and save to regenerate the report.{" "}
           {evaluation.coursebookName} — {evaluation.unitTitle}
         </p>
       </div>

@@ -8,20 +8,44 @@
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    --primary: 221 70% 38%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 76% 40%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 94%;
+    --secondary: 214 32% 93%;
     --secondary-foreground: 222 47% 20%;
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 42%;
-    --accent: 199 89% 94%;
-    --accent-foreground: 222 47% 20%;
+    --accent: 210 90% 95%;
+    --accent-foreground: 222 60% 30%;
     --destructive: 0 72% 45%;
     --destructive-foreground: 210 40% 98%;
     --border: 214 32% 88%;
     --input: 214 32% 86%;
-    --ring: 221 70% 45%;
-    --radius: 0.6rem;
+    --ring: 222 76% 48%;
+    --radius: 0.65rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 96%;
+    --card: 222 44% 12%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 44% 12%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 213 90% 62%;
+    --primary-foreground: 222 47% 10%;
+    --secondary: 217 33% 20%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 40% 22%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 22%;
+    --input: 217 33% 24%;
+    --ring: 213 90% 62%;
   }
 }
 
@@ -31,8 +55,25 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
+}
+
+/* Subtle entrance for cards/sections */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.35s ease-out both;
 }
 
 /* Print-friendly report (Save as PDF) */
