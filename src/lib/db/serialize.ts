@@ -1,5 +1,11 @@
 import type { Evaluation } from "@prisma/client";
-import type { EvaluationInput, GeneratedReport, RatingsByCategory } from "@/lib/types";
+import type {
+  EvaluationInput,
+  GeneratedReport,
+  RatingsByCategory,
+  EvidenceItem,
+  EvaluationMode,
+} from "@/lib/types";
 import type { EvaluationFormValues } from "@/lib/validation";
 import { COURSEMAP_CORE } from "@/lib/frameworks/coursemap-core";
 
@@ -48,6 +54,8 @@ export function toInput(e: Evaluation): EvaluationInput {
       examAlignment: e.examAlignment ?? "",
       learnerNeeds: e.learnerNeeds ?? "",
       constraints: e.constraints ?? "",
+      classSize: e.classSize ?? "",
+      availableLessonTime: e.availableLessonTime ?? "",
     },
     unit: {
       coursebookName: e.coursebookName,
@@ -60,11 +68,66 @@ export function toInput(e: Evaluation): EvaluationInput {
       teacherNotes: e.teacherNotes ?? "",
     },
     ratings: safeParse<RatingsByCategory>(e.ratingsJson, {}),
+    mode: (e.mode as EvaluationMode) ?? "full",
+    problemTags: safeParse<string[]>(e.problemTagsJson, []),
+    syllabusExam: {
+      courseOutcomes: e.syllabusOutcomes ?? "",
+      weeklySyllabusGoals: "",
+      examType: "",
+      examFormats: safeParse<string[]>(e.examFormatsJson, []),
+      cefrDescriptors: e.cefrDescriptorsJson ?? "",
+      institutionPriorities: "",
+    },
+    evidenceBank: safeParse<EvidenceItem[]>(e.evidenceBankJson, []),
+    teacherFinalDecision: e.teacherFinalDecision ?? "",
+    coordinatorRecommendation: e.coordinatorRecommendation ?? "",
   };
 }
 
 export function toReport(e: Evaluation): GeneratedReport | null {
   return safeParse<GeneratedReport | null>(e.reportJson, null);
+}
+
+/** Build the Prisma data object for create/update from validated input + report. */
+export function toEvaluationData(
+  values: EvaluationFormValues,
+  input: EvaluationInput,
+  report: GeneratedReport,
+) {
+  return {
+    institutionType: values.institutionType,
+    learnerLevel: values.learnerLevel,
+    learnerProfile: values.learnerProfile,
+    weeklyHours: values.weeklyHours,
+    courseDuration: values.courseDuration,
+    courseGoal: values.courseGoal,
+    examAlignment: values.examAlignment,
+    learnerNeeds: values.learnerNeeds,
+    constraints: values.constraints,
+    coursebookName: values.coursebookName,
+    publisher: values.publisher,
+    claimedLevel: values.claimedLevel,
+    unitTitle: values.unitTitle,
+    unitSkills: JSON.stringify(values.unitSkills),
+    unitTopic: values.unitTopic,
+    unitText: values.unitText,
+    teacherNotes: values.teacherNotes,
+    ratingsJson: JSON.stringify(input.ratings),
+    reportJson: JSON.stringify(report),
+    overallScore: report.scoreProfile.overallScore,
+    generatedBy: report.generatedBy,
+    // v0.3 fields
+    mode: values.mode ?? "full",
+    problemTagsJson: JSON.stringify(values.problemTags ?? []),
+    classSize: values.classSize || null,
+    availableLessonTime: values.availableLessonTime || null,
+    syllabusOutcomes: values.courseOutcomes || null,
+    examFormatsJson: JSON.stringify(values.examFormats ?? []),
+    cefrDescriptorsJson: values.cefrDescriptors || null,
+    evidenceBankJson: JSON.stringify(values.evidenceBank ?? []),
+    teacherFinalDecision: values.teacherFinalDecision || null,
+    coordinatorRecommendation: values.coordinatorRecommendation || null,
+  };
 }
 
 /** Reconstruct complete form values (all framework categories present) for editing. */
@@ -100,5 +163,18 @@ export function toFormValues(e: Evaluation): EvaluationFormValues {
     teacherNotes: input.unit.teacherNotes,
     ratings,
     useAI: e.generatedBy === "ai",
+    mode: e.mode === "quick" || e.mode === "coordinator" ? e.mode : "full",
+    problemTags: input.problemTags ?? [],
+    classSize: input.context.classSize ?? "",
+    availableLessonTime: input.context.availableLessonTime ?? "",
+    courseOutcomes: input.syllabusExam?.courseOutcomes ?? "",
+    weeklySyllabusGoals: input.syllabusExam?.weeklySyllabusGoals ?? "",
+    examType: input.syllabusExam?.examType ?? "",
+    examFormats: input.syllabusExam?.examFormats ?? [],
+    cefrDescriptors: input.syllabusExam?.cefrDescriptors ?? "",
+    institutionPriorities: input.syllabusExam?.institutionPriorities ?? "",
+    evidenceBank: input.evidenceBank ?? [],
+    teacherFinalDecision: input.teacherFinalDecision ?? "",
+    coordinatorRecommendation: input.coordinatorRecommendation ?? "",
   };
 }

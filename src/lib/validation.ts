@@ -29,6 +29,45 @@ export const COURSE_GOALS = [
   "Other",
 ] as const;
 
+export const EVALUATION_MODES = ["quick", "full", "coordinator"] as const;
+
+export const EXAM_FORMATS = [
+  "Multiple-choice reading",
+  "Short-answer reading",
+  "Summary writing",
+  "Paragraph writing",
+  "Essay writing",
+  "Presentation",
+  "Speaking interview",
+  "Pair speaking task",
+  "Listening multiple choice",
+  "Listening note-taking",
+  "Grammar/vocabulary test",
+  "Integrated skills task",
+] as const;
+
+export const EVIDENCE_TYPES = [
+  "Strength",
+  "Weakness",
+  "Concern",
+  "Adaptation idea",
+  "Exam alignment issue",
+  "Learner need",
+  "Timing issue",
+  "Cultural/content note",
+] as const;
+
+export const EVIDENCE_SEVERITIES = ["Low", "Medium", "High"] as const;
+
+export const COORDINATOR_RECOMMENDATIONS = [
+  "Use as it is",
+  "Use with minor adaptation",
+  "Use with major adaptation",
+  "Use only selectively",
+  "Replace this unit",
+  "Needs department review",
+] as const;
+
 const ratingValue = z.coerce.number().int().min(1).max(5);
 
 export const categoryRatingSchema = z.object({
@@ -36,6 +75,16 @@ export const categoryRatingSchema = z.object({
   ratings: z.record(z.string(), ratingValue),
   evidenceNote: z.string().default(""),
   adaptationNote: z.string().default(""),
+});
+
+export const evidenceItemSchema = z.object({
+  id: z.string(),
+  category: z.string().max(200).default(""),
+  evidenceText: z.string().max(2000),
+  evidenceType: z.string().max(200),
+  severity: z.string().max(20),
+  relatedCriterionId: z.string().max(200).optional(),
+  createdAt: z.string(),
 });
 
 // Length caps protect the database and the AI request from oversized input.
@@ -84,6 +133,49 @@ export const evaluationFormSchema = z.object({
 
   // Whether the user wants to attempt AI generation (if a key is configured)
   useAI: z.boolean().default(true),
+
+  // ---- v0.3 additions (all optional) ----
+  mode: z.enum(["quick", "full", "coordinator"]).default("full"),
+  problemTags: z.array(z.string().max(SHORT)).max(20).default([]),
+  classSize: shortText().default(""),
+  availableLessonTime: shortText().default(""),
+
+  // Syllabus / exam alignment checker
+  courseOutcomes: shortText(MED).default(""),
+  weeklySyllabusGoals: shortText(MED).default(""),
+  examType: shortText().default(""),
+  examFormats: z.array(z.string().max(SHORT)).max(30).default([]),
+  cefrDescriptors: shortText(MED).default(""),
+  institutionPriorities: shortText(MED).default(""),
+
+  // Evidence bank
+  evidenceBank: z.array(evidenceItemSchema).max(100).default([]),
+
+  // Decisions
+  teacherFinalDecision: shortText(MED).default(""),
+  coordinatorRecommendation: shortText().default(""),
 });
 
 export type EvaluationFormValues = z.infer<typeof evaluationFormSchema>;
+
+// Problem-first ("diagnose") mode uses a lighter schema.
+export const diagnoseFormSchema = z.object({
+  problemTags: z
+    .array(z.string().max(SHORT))
+    .min(1, "Select at least one problem.")
+    .max(20),
+  learnerLevel: z.string().min(1, "Please choose a learner level.").max(SHORT),
+  classSize: shortText().default(""),
+  availableLessonTime: shortText().default(""),
+  unitTopic: shortText().default(""),
+  unitText: z
+    .string()
+    .min(20, "Please add a short unit summary (min 20 characters).")
+    .max(LONG),
+  evidenceNotes: shortText(MED).default(""),
+  coursebookName: shortText().default("Untitled coursebook"),
+  unitTitle: shortText().default("Untitled unit"),
+  useAI: z.boolean().default(true),
+});
+
+export type DiagnoseFormValues = z.infer<typeof diagnoseFormSchema>;

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db/prisma";
 import { evaluationFormSchema } from "@/lib/validation";
 import { buildEvaluationInput } from "@/lib/report/build-input";
 import { generateReport } from "@/lib/report/generate";
+import { toEvaluationData } from "@/lib/db/serialize";
 import { checkRateLimit, maybeSweep } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -40,29 +41,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   try {
     const saved = await prisma.evaluation.update({
       where: { id: params.id },
-      data: {
-        institutionType: values.institutionType,
-        learnerLevel: values.learnerLevel,
-        learnerProfile: values.learnerProfile,
-        weeklyHours: values.weeklyHours,
-        courseDuration: values.courseDuration,
-        courseGoal: values.courseGoal,
-        examAlignment: values.examAlignment,
-        learnerNeeds: values.learnerNeeds,
-        constraints: values.constraints,
-        coursebookName: values.coursebookName,
-        publisher: values.publisher,
-        claimedLevel: values.claimedLevel,
-        unitTitle: values.unitTitle,
-        unitSkills: JSON.stringify(values.unitSkills),
-        unitTopic: values.unitTopic,
-        unitText: values.unitText,
-        teacherNotes: values.teacherNotes,
-        ratingsJson: JSON.stringify(input.ratings),
-        reportJson: JSON.stringify(report),
-        overallScore: report.scoreProfile.overallScore,
-        generatedBy: report.generatedBy,
-      },
+      data: toEvaluationData(values, input, report),
     });
     return NextResponse.json({ id: saved.id, usedFallback, aiError: aiError ?? null });
   } catch (err) {

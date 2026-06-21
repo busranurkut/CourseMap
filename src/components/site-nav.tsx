@@ -8,9 +8,11 @@ import { Logo } from "@/components/logo";
 
 const links = [
   { href: "/", label: "Home" },
-  { href: "/evaluations/new", label: "New evaluation" },
+  { href: "/evaluations/new", label: "New" },
+  { href: "/diagnose", label: "Fix a unit" },
+  { href: "/recipes", label: "Recipes" },
   { href: "/evaluations", label: "History" },
-  { href: "/literature", label: "Literature basis" },
+  { href: "/literature", label: "Literature" },
 ];
 
 export function SiteNav() {

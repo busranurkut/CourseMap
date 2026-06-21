@@ -34,7 +34,7 @@ export default async function HistoryPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Evaluation history</h1>
           <p className="text-muted-foreground">
-            Saved evaluations stored locally on this machine.
+            Saved evaluations from the configured database.
           </p>
         </div>
         <Button asChild>

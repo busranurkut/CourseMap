@@ -1,6 +1,23 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { EvaluationInput, GeneratedReport, ScoreProfile } from "@/lib/types";
+import type {
+  EvaluationInput,
+  GeneratedReport,
+  ScoreProfile,
+  BeforeAfterPlanItem,
+  LessonPlan,
+  CoordinatorSummary,
+  SyllabusExamAlignment,
+} from "@/lib/types";
 import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/ai/prompt";
+import {
+  computeConfidence,
+  selectRecipes,
+  buildBeforeAfterPlan,
+  buildSyllabusExamAlignment,
+  buildLessonPlan,
+  buildCoordinatorSummary,
+  buildTeacherEvaluationSummary,
+} from "@/lib/report/sections";
 
 const DEFAULT_MODEL = "claude-opus-4-8";
 
@@ -27,8 +44,88 @@ function asStringArray(v: unknown): string[] {
   return [];
 }
 
+function asString(v: unknown): string {
+  return typeof v === "string" ? v : v == null ? "" : String(v);
+}
+
+function normalizeBeforeAfter(raw: any): BeforeAfterPlanItem[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const items = raw.map((b: any) => ({
+    originalStage: asString(b?.originalStage),
+    identifiedIssue: asString(b?.identifiedIssue),
+    evidence: asString(b?.evidence),
+    category: asString(b?.category),
+    adaptedStage: asString(b?.adaptedStage),
+    adaptationAction: asString(b?.adaptationAction),
+    timeRequired: asString(b?.timeRequired),
+    rationale: asString(b?.rationale),
+    expectedBenefit: asString(b?.expectedBenefit),
+  }));
+  return items.length ? items : undefined;
+}
+
+function normalizeSyllabus(raw: any): SyllabusExamAlignment | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  return {
+    supportedOutcomes: asStringArray(raw.supportedOutcomes),
+    weaklySupportedOutcomes: asStringArray(raw.weaklySupportedOutcomes),
+    missingExamPreparation: asStringArray(raw.missingExamPreparation),
+    recommendedExamAlignedAdaptations: asStringArray(
+      raw.recommendedExamAlignedAdaptations,
+    ),
+    recommendedFinalOutputTask: raw.recommendedFinalOutputTask
+      ? asString(raw.recommendedFinalOutputTask)
+      : undefined,
+  };
+}
+
+function normalizeLessonPlan(raw: any): LessonPlan | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const stages = Array.isArray(raw.stages)
+    ? raw.stages.map((s: any) => ({
+        stage: asString(s?.stage),
+        time: asString(s?.time),
+        aim: asString(s?.aim),
+        teacherAction: asString(s?.teacherAction),
+        studentAction: asString(s?.studentAction),
+        interaction: asString(s?.interaction),
+        materials: asString(s?.materials),
+        notes: asString(s?.notes),
+      }))
+    : [];
+  if (!stages.length) return undefined;
+  return {
+    title: asString(raw.title),
+    level: asString(raw.level),
+    classProfile: asString(raw.classProfile),
+    lessonLength: asString(raw.lessonLength),
+    mainAim: asString(raw.mainAim),
+    subsidiaryAims: asStringArray(raw.subsidiaryAims),
+    materials: asStringArray(raw.materials),
+    stages,
+    assessmentLink: asString(raw.assessmentLink),
+    homeworkExtension: asString(raw.homeworkExtension),
+  };
+}
+
+function normalizeCoordinator(raw: any): CoordinatorSummary | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  return {
+    summary: asString(raw.summary),
+    mainStrengths: asStringArray(raw.mainStrengths),
+    mainConcerns: asStringArray(raw.mainConcerns),
+    requiredAdaptations: asStringArray(raw.requiredAdaptations),
+    examAlignmentJudgment: asString(raw.examAlignmentJudgment),
+    recommendation: asString(raw.recommendation),
+  };
+}
+
 /** Coerce arbitrary parsed JSON into a GeneratedReport, attaching the computed score profile. */
-function normalizeReport(raw: any, profile: ScoreProfile): GeneratedReport {
+function normalizeReport(
+  raw: any,
+  input: EvaluationInput,
+  profile: ScoreProfile,
+): GeneratedReport {
   const categoryFeedback = Array.isArray(raw?.categoryFeedback)
     ? raw.categoryFeedback.map((c: any) => ({
         category: String(c?.category ?? ""),
@@ -55,6 +152,21 @@ function normalizeReport(raw: any, profile: ScoreProfile): GeneratedReport {
     : [];
 
   const ap = raw?.adaptationPlan ?? {};
+  const confidence = computeConfidence(input, profile);
+  const recipes = selectRecipes(input, profile);
+
+  // AI sections, backfilled with deterministic builders when the model omits them.
+  const beforeAfterPlan =
+    normalizeBeforeAfter(raw?.beforeAfterPlan) ?? buildBeforeAfterPlan(input, profile);
+  const syllabusExamAlignment =
+    normalizeSyllabus(raw?.syllabusExamAlignment) ??
+    buildSyllabusExamAlignment(input, profile);
+  const lessonPlan =
+    normalizeLessonPlan(raw?.lessonPlan) ??
+    buildLessonPlan(input, profile, supplementaryTasks);
+  const coordinatorSummary =
+    normalizeCoordinator(raw?.coordinatorSummary) ??
+    buildCoordinatorSummary(input, profile);
 
   return {
     overview: String(raw?.overview ?? ""),
@@ -74,6 +186,21 @@ function normalizeReport(raw: any, profile: ScoreProfile): GeneratedReport {
     limitations: asStringArray(raw?.limitations),
     scoreProfile: profile,
     generatedBy: "ai",
+
+    // v0.3 sections
+    teacherEvaluationSummary:
+      asString(raw?.teacherEvaluationSummary) ||
+      buildTeacherEvaluationSummary(input, profile),
+    aiSupportedInterpretation: asString(raw?.aiSupportedInterpretation),
+    confidenceLevel: confidence.level,
+    confidenceSummary: asString(raw?.confidenceSummary) || confidence.summary,
+    beforeAfterPlan,
+    syllabusExamAlignment,
+    adaptationRecipesUsed: recipes.map((r) => ({ id: r.id, title: r.title })),
+    lessonPlan,
+    coordinatorSummary,
+    mode: input.mode ?? "full",
+    problemTags: input.problemTags ?? [],
   };
 }
 
@@ -103,7 +230,7 @@ export async function generateAIReport(
     .join("\n");
 
   const raw = parseJsonObject(text);
-  const report = normalizeReport(raw, profile);
+  const report = normalizeReport(raw, input, profile);
 
   if (report.categoryFeedback.length === 0 || report.supplementaryTasks.length < 1) {
     throw new Error("AI report was incomplete.");

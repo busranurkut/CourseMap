@@ -1,9 +1,99 @@
-import type { EvaluationInput, GeneratedReport } from "@/lib/types";
+import type {
+  EvaluationInput,
+  GeneratedReport,
+  LessonPlan,
+  CoordinatorSummary,
+  BeforeAfterPlanItem,
+  SyllabusExamAlignment,
+} from "@/lib/types";
 import { sourceLabels, REPORT_FRAMEWORK_NOTE } from "@/lib/frameworks/literature-basis";
 
 function list(items: string[]): string {
   if (!items.length) return "_None noted._\n";
   return items.map((i) => `- ${i}`).join("\n") + "\n";
+}
+
+function beforeAfterSection(items: BeforeAfterPlanItem[] | undefined): string[] {
+  if (!items?.length) return [];
+  const out = ["## Before / After adaptation plan", ""];
+  items.forEach((b, i) => {
+    out.push(`### ${i + 1}. ${b.category}`);
+    out.push(`- **Before — original stage:** ${b.originalStage}`);
+    out.push(`- **Issue:** ${b.identifiedIssue}`);
+    out.push(`- **Evidence:** ${b.evidence}`);
+    out.push(`- **After — adapted stage:** ${b.adaptedStage}`);
+    out.push(`- **Action:** ${b.adaptationAction}`);
+    out.push(`- **Time required:** ${b.timeRequired}`);
+    out.push(`- **Rationale:** ${b.rationale}`);
+    out.push(`- **Expected benefit:** ${b.expectedBenefit}`);
+    out.push("");
+  });
+  return out;
+}
+
+function syllabusSection(a: SyllabusExamAlignment | undefined): string[] {
+  if (!a) return [];
+  const out = ["## Syllabus / exam alignment", ""];
+  out.push("**Supported outcomes**");
+  out.push(list(a.supportedOutcomes));
+  out.push("**Weakly supported outcomes**");
+  out.push(list(a.weaklySupportedOutcomes));
+  out.push("**Missing exam preparation**");
+  out.push(list(a.missingExamPreparation));
+  out.push("**Recommended exam-aligned adaptations**");
+  out.push(list(a.recommendedExamAlignedAdaptations));
+  if (a.recommendedFinalOutputTask) {
+    out.push(`**Recommended final output task:** ${a.recommendedFinalOutputTask}`);
+    out.push("");
+  }
+  return out;
+}
+
+export function lessonPlanToMarkdownLines(lp: LessonPlan): string[] {
+  const out = [`# Lesson plan: ${lp.title}`, ""];
+  out.push(`- **Level:** ${lp.level}`);
+  out.push(`- **Class profile:** ${lp.classProfile}`);
+  out.push(`- **Lesson length:** ${lp.lessonLength}`);
+  out.push(`- **Main aim:** ${lp.mainAim}`);
+  out.push(`- **Subsidiary aims:**`);
+  lp.subsidiaryAims.forEach((s) => out.push(`  - ${s}`));
+  out.push(`- **Materials:**`);
+  lp.materials.forEach((m) => out.push(`  - ${m}`));
+  out.push("");
+  out.push(`## Stages`);
+  out.push("");
+  out.push(
+    `| Stage | Time | Aim | Teacher | Student | Interaction | Materials | Notes |`,
+  );
+  out.push(`| --- | --- | --- | --- | --- | --- | --- | --- |`);
+  for (const s of lp.stages) {
+    out.push(
+      `| ${s.stage} | ${s.time} | ${s.aim} | ${s.teacherAction} | ${s.studentAction} | ${s.interaction} | ${s.materials} | ${s.notes} |`,
+    );
+  }
+  out.push("");
+  out.push(`- **Assessment link:** ${lp.assessmentLink}`);
+  out.push(`- **Homework / extension:** ${lp.homeworkExtension}`);
+  out.push("");
+  return out;
+}
+
+function coordinatorSection(c: CoordinatorSummary | undefined): string[] {
+  if (!c) return [];
+  const out = ["## Coordinator summary", ""];
+  out.push(c.summary);
+  out.push("");
+  out.push("**Main strengths**");
+  out.push(list(c.mainStrengths));
+  out.push("**Main concerns**");
+  out.push(list(c.mainConcerns));
+  out.push("**Required adaptations**");
+  out.push(list(c.requiredAdaptations));
+  out.push(`**Exam/syllabus alignment:** ${c.examAlignmentJudgment}`);
+  out.push("");
+  out.push(`**Recommendation:** ${c.recommendation}`);
+  out.push("");
+  return out;
 }
 
 export function reportToMarkdown(
@@ -116,6 +206,27 @@ export function reportToMarkdown(
     lines.push("");
   });
 
+  // v0.3 sections
+  lines.push(...beforeAfterSection(report.beforeAfterPlan));
+  lines.push(...syllabusSection(report.syllabusExamAlignment));
+
+  if (report.adaptationRecipesUsed?.length) {
+    lines.push(`## Adaptation recipes used`);
+    lines.push(list(report.adaptationRecipesUsed.map((r) => r.title)));
+  }
+
+  if (report.lessonPlan) {
+    lines.push(...lessonPlanToMarkdownLines(report.lessonPlan));
+  }
+
+  lines.push(...coordinatorSection(report.coordinatorSummary));
+
+  if (input.teacherFinalDecision?.trim()) {
+    lines.push(`## Teacher / coordinator final decision`);
+    lines.push(input.teacherFinalDecision.trim());
+    lines.push("");
+  }
+
   lines.push(`## Teacher implementation notes`);
   lines.push(list(report.implementationNotes));
 
@@ -127,5 +238,72 @@ export function reportToMarkdown(
   lines.push(`_${REPORT_FRAMEWORK_NOTE}_`);
   lines.push("");
 
+  return lines.join("\n");
+}
+
+// ---- Per-section exporters (used by the report Export tab) ----
+
+export function lessonPlanToMarkdown(report: GeneratedReport): string {
+  if (!report.lessonPlan) return "# Lesson plan\n\n_No lesson plan available._\n";
+  return lessonPlanToMarkdownLines(report.lessonPlan).join("\n");
+}
+
+export function adaptationPlanToMarkdown(report: GeneratedReport): string {
+  const lines = ["# Adaptation plan", ""];
+  lines.push(`## What to keep`);
+  lines.push(list(report.adaptationPlan.keep));
+  lines.push(`## What to cut`);
+  lines.push(list(report.adaptationPlan.cut));
+  lines.push(`## What to simplify`);
+  lines.push(list(report.adaptationPlan.simplify));
+  lines.push(`## What to supplement`);
+  lines.push(list(report.adaptationPlan.supplement));
+  lines.push(`## What to reorder`);
+  lines.push(list(report.adaptationPlan.reorder));
+  lines.push(...beforeAfterSection(report.beforeAfterPlan));
+  return lines.join("\n");
+}
+
+export function coordinatorSummaryToMarkdown(report: GeneratedReport): string {
+  const lines = coordinatorSection(report.coordinatorSummary);
+  return lines.length ? lines.join("\n") : "# Coordinator summary\n\n_Not available._\n";
+}
+
+export function teacherEvaluationToMarkdown(
+  input: EvaluationInput,
+  report: GeneratedReport,
+): string {
+  const ctx = input.context;
+  const lines = ["# Teacher evaluation", ""];
+  if (report.teacherEvaluationSummary) {
+    lines.push(report.teacherEvaluationSummary, "");
+  }
+  lines.push(`## Teaching context`);
+  lines.push(`- Institution type: ${ctx.institutionType}`);
+  lines.push(`- Learner level: ${ctx.learnerLevel}`);
+  lines.push(`- Course goal: ${ctx.courseGoal}`);
+  lines.push(`- Class size: ${ctx.classSize || "—"}`);
+  lines.push(`- Available lesson time: ${ctx.availableLessonTime || "—"}`);
+  lines.push("");
+  lines.push(`## Teacher ratings`);
+  lines.push("");
+  lines.push(`| Category | Score |`);
+  lines.push(`| --- | --- |`);
+  for (const c of report.scoreProfile.categoryScores) {
+    lines.push(`| ${c.categoryName} | ${c.score > 0 ? c.score.toFixed(2) : "—"} |`);
+  }
+  lines.push("");
+  if (input.evidenceBank?.length) {
+    lines.push(`## Evidence bank`);
+    input.evidenceBank.forEach((e) =>
+      lines.push(`- [${e.evidenceType}, ${e.severity}] ${e.evidenceText}`),
+    );
+    lines.push("");
+  }
+  if (input.teacherFinalDecision?.trim()) {
+    lines.push(`## Teacher final decision`);
+    lines.push(input.teacherFinalDecision.trim());
+    lines.push("");
+  }
   return lines.join("\n");
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { toSummary } from "@/lib/db/serialize";
+import { toSummary, toEvaluationData } from "@/lib/db/serialize";
 import { evaluationFormSchema } from "@/lib/validation";
 import { buildEvaluationInput } from "@/lib/report/build-input";
 import { generateReport } from "@/lib/report/generate";
@@ -51,29 +51,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const saved = await prisma.evaluation.create({
-      data: {
-        institutionType: values.institutionType,
-        learnerLevel: values.learnerLevel,
-        learnerProfile: values.learnerProfile,
-        weeklyHours: values.weeklyHours,
-        courseDuration: values.courseDuration,
-        courseGoal: values.courseGoal,
-        examAlignment: values.examAlignment,
-        learnerNeeds: values.learnerNeeds,
-        constraints: values.constraints,
-        coursebookName: values.coursebookName,
-        publisher: values.publisher,
-        claimedLevel: values.claimedLevel,
-        unitTitle: values.unitTitle,
-        unitSkills: JSON.stringify(values.unitSkills),
-        unitTopic: values.unitTopic,
-        unitText: values.unitText,
-        teacherNotes: values.teacherNotes,
-        ratingsJson: JSON.stringify(input.ratings),
-        reportJson: JSON.stringify(report),
-        overallScore: report.scoreProfile.overallScore,
-        generatedBy: report.generatedBy,
-      },
+      data: toEvaluationData(values, input, report),
     });
 
     return NextResponse.json(

@@ -1,5 +1,10 @@
 import type { EvaluationFormValues } from "@/lib/validation";
-import type { EvaluationInput, RatingsByCategory, Rating } from "@/lib/types";
+import type {
+  EvaluationInput,
+  RatingsByCategory,
+  Rating,
+  EvidenceItem,
+} from "@/lib/types";
 
 /** Normalize raw form values into a typed EvaluationInput. */
 export function buildEvaluationInput(values: EvaluationFormValues): EvaluationInput {
@@ -29,6 +34,8 @@ export function buildEvaluationInput(values: EvaluationFormValues): EvaluationIn
       examAlignment: values.examAlignment ?? "",
       learnerNeeds: values.learnerNeeds ?? "",
       constraints: values.constraints ?? "",
+      classSize: values.classSize ?? "",
+      availableLessonTime: values.availableLessonTime ?? "",
     },
     unit: {
       coursebookName: values.coursebookName,
@@ -41,5 +48,18 @@ export function buildEvaluationInput(values: EvaluationFormValues): EvaluationIn
       teacherNotes: values.teacherNotes ?? "",
     },
     ratings,
+    mode: values.mode ?? "full",
+    problemTags: values.problemTags ?? [],
+    syllabusExam: {
+      courseOutcomes: values.courseOutcomes ?? "",
+      weeklySyllabusGoals: values.weeklySyllabusGoals ?? "",
+      examType: values.examType ?? "",
+      examFormats: values.examFormats ?? [],
+      cefrDescriptors: values.cefrDescriptors ?? "",
+      institutionPriorities: values.institutionPriorities ?? "",
+    },
+    evidenceBank: (values.evidenceBank ?? []) as EvidenceItem[],
+    teacherFinalDecision: values.teacherFinalDecision ?? "",
+    coordinatorRecommendation: values.coordinatorRecommendation ?? "",
   };
 }

@@ -20,7 +20,7 @@ re-deploys automatically.
 2. In a terminal:
 
    ```bash
-   cd /Users/busranurkut/CourseMap
+   cd coursemap
    git init
    git add .
    git commit -m "Initial CourseMap MVP"
