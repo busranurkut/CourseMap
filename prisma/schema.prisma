@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Evaluation {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Teaching context
+  institutionType String
+  learnerLevel    String
+  learnerProfile  String?
+  weeklyHours     Int?
+  courseDuration  String?
+  courseGoal      String
+  examAlignment   String?
+  learnerNeeds    String?
+  constraints     String?
+
+  // Coursebook unit information
+  coursebookName  String
+  publisher       String?
+  claimedLevel    String?
+  unitTitle       String
+  unitSkills      String? // JSON string array
+  unitTopic       String?
+  unitText        String?
+  teacherNotes    String?
+
+  // Ratings + generated report (stored as JSON strings)
+  ratingsJson     String
+  reportJson      String?
+  overallScore    Float?
+  generatedBy     String   @default("fallback") // "ai" | "fallback"
+}
