@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-06-22
+
+### Added
+
+- **Three evaluation modes**: Quick evaluation, Full evaluation, Coordinator review.
+- **Problem-first mode** at `/diagnose` ("Fix a weak unit quickly").
+- **Report tabs** separating Teacher evaluation from AI-supported interpretation,
+  with a **confidence level** (High/Medium/Low) based on available evidence.
+- **Before/After adaptation plan**, **Syllabus/exam alignment checker**,
+  **Lesson plan** (with a print-friendly route), and **Coordinator summary**.
+- **Adaptation recipes** library and `/recipes` browser; recipes used are shown in reports.
+- **Evidence bank** for tagging evidence snippets that strengthen interpretation.
+- **15 new literature sources** (Sheldon; Mukundan et al.; British Council; Harwood;
+  Tomlinson & Masuhara; Grabe; Field; Vandergrift & Goh; Long; Skehan; UNESCO;
+  European Commission; US Dept of Education) with `sourceType`/`category`/`caution`,
+  plus a grouped Literature basis page and "How to read source labels".
+- Homepage "Why not just ask AI directly?" section and three primary CTAs.
+- Per-section Markdown export (teacher evaluation, adaptation plan, lesson plan,
+  coordinator summary) in the report Export tab.
+
+### Changed
+
+- AI prompt + structured schema and the fallback generator now produce all new
+  sections; AI omissions are backfilled deterministically.
+- Database documentation made consistent (PostgreSQL/Neon); removed hardcoded local
+  paths from the deployment guide.
+
 ## [0.2.0] - 2026-06-21
 
 ### Added

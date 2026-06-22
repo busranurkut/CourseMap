@@ -37,7 +37,7 @@ All sample/demo data in this repository is **fictional**. For example:
 ## Data and privacy
 
 - For the MVP, only user-created evaluation data is stored, and it is stored
-  **locally** in a SQLite database (`prisma/dev.db`, git-ignored).
+  in the configured database (PostgreSQL/Neon in production; see `DATABASE_URL`).
 - When AI generation is enabled, the evaluation inputs are sent to the Anthropic API
   solely to generate the report. Review Anthropic's terms and your institution's data
   policies before enabling it with sensitive content.

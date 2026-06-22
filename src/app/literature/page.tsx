@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LITERATURE_SOURCES } from "@/lib/frameworks/literature-basis";
+import { Badge } from "@/components/ui/badge";
+import { sourcesByCategory } from "@/lib/frameworks/literature-basis";
 
 export const metadata: Metadata = {
-  title: "Literature basis — CourseMap",
+  title: "Literature basis",
 };
+
+function typeVariant(t: string): "default" | "secondary" | "muted" {
+  if (t === "core") return "default";
+  if (t === "ethics") return "secondary";
+  return "muted";
+}
 
 const usage = [
   ["Cunningsworth & McGrath", "Coursebook evaluation and context fit."],
@@ -19,9 +26,7 @@ const usage = [
 ];
 
 export default function LiteraturePage() {
-  const references = Object.values(LITERATURE_SOURCES)
-    .map((s) => s.apa)
-    .sort((a, b) => a.localeCompare(b));
+  const grouped = sourcesByCategory();
 
   return (
     <div className="space-y-8">
@@ -70,23 +75,63 @@ export default function LiteraturePage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>References (APA)</CardTitle>
+          <CardTitle>How to read source labels</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ul className="space-y-3 text-sm text-foreground">
-            {references.map((r) => (
-              <li key={r} className="pl-8 -indent-8 leading-relaxed">
-                {r}
-              </li>
-            ))}
-          </ul>
+        <CardContent className="space-y-2 text-sm text-foreground">
+          <p>
+            Throughout CourseMap you will see compact labels such as{" "}
+            <Badge variant="muted">Ellis</Badge> or{" "}
+            <Badge variant="muted">CEFR (2020)</Badge>. These are{" "}
+            <strong>source anchors</strong> — they indicate the principle a criterion or
+            suggestion draws on. They are not quotations or citations of specific pages.
+          </p>
+          <p className="flex flex-wrap items-center gap-2">
+            <Badge variant="default">core</Badge> coursebook evaluation &amp; materials
+            development
+            <Badge variant="muted">supporting</Badge> skills, tasks, vocabulary, CEFR
+            <Badge variant="secondary">ethics</Badge> responsible, human-in-the-loop AI
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>References by category (APA)</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {grouped.map((group) => (
+            <div key={group.category}>
+              <h3 className="mb-2 text-sm font-semibold text-foreground">
+                {group.category}
+              </h3>
+              <ul className="space-y-3 text-sm text-foreground">
+                {group.sources.map((s) => (
+                  <li key={s.key} className="pl-8 -indent-8 leading-relaxed">
+                    <Badge
+                      variant={typeVariant(s.sourceType)}
+                      className="mr-1 align-middle"
+                    >
+                      {s.sourceType}
+                    </Badge>
+                    {s.apa}
+                    {s.caution && (
+                      <span className="ml-1 text-xs italic text-muted-foreground">
+                        — {s.caution}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </CardContent>
       </Card>
 
       <p className="text-xs text-muted-foreground">
-        Author attributions are used to indicate the principles behind each criterion.
-        CourseMap does not reproduce text from these sources and does not fabricate
-        quotations or page numbers.
+        Author attributions indicate the principles behind each criterion. CourseMap does
+        not reproduce text from these sources and does not fabricate quotations, page
+        numbers, or DOIs. AI-supported interpretation must use sources only as general
+        theoretical support.
       </p>
     </div>
   );

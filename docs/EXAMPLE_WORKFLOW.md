@@ -50,7 +50,7 @@ A walkthrough using the fictional sample data shipped with CourseMap.
 7. **Export.** Download as **Markdown**, **Print / Save as PDF**, or **copy** the
    adaptation plan for your scheme of work.
 
-8. **History.** The evaluation is saved locally and appears under **History**, where
+8. **History.** The evaluation is saved in the configured database and appears under **History**, where
    you can re-open or delete it.
 
 ## Try it quickly

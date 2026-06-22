@@ -38,4 +38,16 @@ model Evaluation {
   reportJson      String?
   overallScore    Float?
   generatedBy     String   @default("fallback") // "ai" | "fallback"
+
+  // v0.3: modes, problem tags, syllabus/exam, evidence bank, decisions
+  mode                     String  @default("full") // quick | full | coordinator | diagnose
+  problemTagsJson          String? // JSON string array
+  classSize                String?
+  availableLessonTime      String?
+  syllabusOutcomes         String?
+  examFormatsJson          String? // JSON string array
+  cefrDescriptorsJson      String? // free text or JSON
+  evidenceBankJson         String? // JSON array of EvidenceItem
+  teacherFinalDecision     String?
+  coordinatorRecommendation String?
 }

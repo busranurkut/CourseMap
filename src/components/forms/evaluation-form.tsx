@@ -30,9 +30,31 @@ import {
   LEARNER_LEVELS,
   COURSE_GOALS,
   SKILL_OPTIONS,
+  EXAM_FORMATS,
+  EVIDENCE_TYPES,
+  EVIDENCE_SEVERITIES,
+  COORDINATOR_RECOMMENDATIONS,
 } from "@/lib/validation";
+import { PROBLEM_TAGS } from "@/lib/types";
 import { COURSEMAP_CORE } from "@/lib/frameworks/coursemap-core";
 import { sourceLabels } from "@/lib/frameworks/literature-basis";
+
+// Quick Evaluation rates a focused subset of the framework.
+const QUICK_CATEGORY_IDS = [
+  "level-cognitive-load",
+  "engagement",
+  "skills-balance",
+  "communicative-value",
+  "assessment-alignment",
+  "adaptability",
+];
+
+const EVIDENCE_PLACEHOLDERS = [
+  "The reading text is relevant, but the post-reading stage only checks comprehension.",
+  "The unit does not prepare students for our paragraph-writing exam.",
+  "The topic is interesting, but students may need vocabulary support.",
+  "There is no freer speaking task after controlled practice.",
+];
 
 function buildDefaultRatings() {
   const ratings: EvaluationFormValues["ratings"] = {};
@@ -96,16 +118,73 @@ export function EvaluationForm({
       teacherNotes: "",
       ratings: buildDefaultRatings(),
       useAI: true,
+      mode: "full",
+      problemTags: [],
+      classSize: "",
+      availableLessonTime: "",
+      courseOutcomes: "",
+      weeklySyllabusGoals: "",
+      examType: "",
+      examFormats: [],
+      cefrDescriptors: "",
+      institutionPriorities: "",
+      evidenceBank: [],
+      teacherFinalDecision: "",
+      coordinatorRecommendation: "",
     },
   });
 
   const selectedSkills = watch("unitSkills") ?? [];
+  const mode = watch("mode") ?? "full";
+  const examFormats = watch("examFormats") ?? [];
+  const problemTags = watch("problemTags") ?? [];
+  const evidenceBank = watch("evidenceBank") ?? [];
+
+  const shownCategories =
+    mode === "quick"
+      ? COURSEMAP_CORE.categories.filter((c) => QUICK_CATEGORY_IDS.includes(c.id))
+      : COURSEMAP_CORE.categories;
 
   function toggleSkill(skill: string) {
     const set = new Set(selectedSkills);
     if (set.has(skill)) set.delete(skill);
     else set.add(skill);
     setValue("unitSkills", Array.from(set), { shouldValidate: false });
+  }
+
+  function toggleExamFormat(fmt: string) {
+    const set = new Set(examFormats);
+    if (set.has(fmt)) set.delete(fmt);
+    else set.add(fmt);
+    setValue("examFormats", Array.from(set), { shouldValidate: false });
+  }
+
+  // Evidence bank helpers
+  const [evText, setEvText] = useState("");
+  const [evType, setEvType] = useState<string>(EVIDENCE_TYPES[0]);
+  const [evSeverity, setEvSeverity] = useState<string>("Medium");
+  const [evCategory, setEvCategory] = useState("");
+
+  function addEvidence() {
+    if (evText.trim().length < 3) return;
+    const item = {
+      id: `ev_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      category: evCategory,
+      evidenceText: evText.trim(),
+      evidenceType: evType,
+      severity: evSeverity,
+      createdAt: new Date().toISOString(),
+    };
+    setValue("evidenceBank", [...evidenceBank, item], { shouldValidate: false });
+    setEvText("");
+  }
+
+  function removeEvidence(id: string) {
+    setValue(
+      "evidenceBank",
+      evidenceBank.filter((e) => e.id !== id),
+      { shouldValidate: false },
+    );
   }
 
   async function onSubmit(values: EvaluationFormValues) {
@@ -155,14 +234,64 @@ export function EvaluationForm({
     (all.unitText?.trim().length ?? 0) >= 20,
   ];
   const requiredDone = requiredChecks.filter(Boolean).length;
-  const totalCategories = COURSEMAP_CORE.categories.length;
-  const ratedCategories = COURSEMAP_CORE.categories.filter((c) => {
+  const totalCategories = shownCategories.length;
+  const ratedCategories = shownCategories.filter((c) => {
     const r = all.ratings?.[c.id]?.ratings ?? {};
     return Object.values(r).some((v) => Number(v) >= 1);
   }).length;
 
+  const MODES: {
+    value: "quick" | "full" | "coordinator";
+    label: string;
+    desc: string;
+  }[] = [
+    {
+      value: "quick",
+      label: "Quick evaluation",
+      desc: "6 criteria + biggest problem. Fast.",
+    },
+    { value: "full", label: "Full evaluation", desc: "All 12 framework categories." },
+    {
+      value: "coordinator",
+      label: "Coordinator review",
+      desc: "Full evaluation + formal recommendation.",
+    },
+  ];
+
   return (
     <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+      {/* Mode selector */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Evaluation mode</CardTitle>
+          <CardDescription>
+            Teacher judgment first. AI support second. Choose how much detail to enter.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 sm:grid-cols-3">
+          {MODES.map((m) => {
+            const active = mode === m.value;
+            return (
+              <button
+                key={m.value}
+                type="button"
+                onClick={() => setValue("mode", m.value, { shouldValidate: false })}
+                aria-pressed={active}
+                className={cn(
+                  "rounded-lg border p-3 text-left transition-colors",
+                  active
+                    ? "border-primary bg-accent/50 ring-1 ring-primary"
+                    : "border-input bg-card hover:bg-muted",
+                )}
+              >
+                <p className="text-sm font-semibold text-foreground">{m.label}</p>
+                <p className="text-xs text-muted-foreground">{m.desc}</p>
+              </button>
+            );
+          })}
+        </CardContent>
+      </Card>
+
       {/* Sticky progress */}
       <div className="no-print sticky top-[57px] z-20 -mx-1 rounded-lg border border-border bg-card/95 px-4 py-3 shadow-sm backdrop-blur">
         <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm">
@@ -249,6 +378,18 @@ export function EvaluationForm({
               max={80}
               placeholder="e.g. 6"
               {...register("weeklyHours")}
+            />
+          </div>
+          <div>
+            <Label htmlFor="classSize">Class size</Label>
+            <Input id="classSize" placeholder="e.g. 28" {...register("classSize")} />
+          </div>
+          <div>
+            <Label htmlFor="availableLessonTime">Available lesson time</Label>
+            <Input
+              id="availableLessonTime"
+              placeholder="e.g. 50 minutes"
+              {...register("availableLessonTime")}
             />
           </div>
           <div>
@@ -389,14 +530,21 @@ export function EvaluationForm({
       {/* C. Evaluation framework */}
       <Card>
         <CardHeader>
-          <CardTitle>C. {COURSEMAP_CORE.name}</CardTitle>
+          <CardTitle>
+            C. {mode === "quick" ? "Quick criteria" : COURSEMAP_CORE.name}
+          </CardTitle>
           <CardDescription>
             Rate each criterion 1 (very weak) to 5 (very strong). Leave a criterion
             unrated if not applicable. Add evidence and adaptation notes per category.
+            {mode === "quick" ? " Quick mode shows a focused set of six categories." : ""}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {COURSEMAP_CORE.categories.map((cat) => (
+          <p className="rounded-md bg-accent/40 p-3 text-xs text-foreground">
+            CourseMap works best when you add concrete evidence. A rating alone can guide
+            the report, but evidence notes make the interpretation stronger.
+          </p>
+          {shownCategories.map((cat) => (
             <div key={cat.id} className="rounded-lg border border-border p-4">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div>
@@ -447,7 +595,7 @@ export function EvaluationForm({
                   <Textarea
                     id={`ev-${cat.id}`}
                     className="min-h-[60px]"
-                    placeholder="What in the unit supports your ratings?"
+                    placeholder={`e.g. ${EVIDENCE_PLACEHOLDERS[0]}`}
                     {...register(`ratings.${cat.id}.evidenceNote` as const)}
                   />
                 </div>
@@ -465,6 +613,212 @@ export function EvaluationForm({
               </div>
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      {/* Biggest problem (Quick mode) */}
+      {mode === "quick" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Biggest problem</CardTitle>
+            <CardDescription>What is the main issue with this unit?</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Select
+              value={problemTags[0] ?? ""}
+              onChange={(e) =>
+                setValue("problemTags", e.target.value ? [e.target.value] : [], {
+                  shouldValidate: false,
+                })
+              }
+              aria-label="Biggest problem"
+            >
+              <option value="">Select…</option>
+              {PROBLEM_TAGS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </Select>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Syllabus / exam alignment (optional) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Syllabus &amp; exam alignment (optional)</CardTitle>
+          <CardDescription>
+            Helps CourseMap check whether the unit prepares learners for your assessment.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <Label htmlFor="courseOutcomes">Course outcomes</Label>
+            <Textarea
+              id="courseOutcomes"
+              placeholder="e.g. By the end of the course, learners can write a structured academic paragraph."
+              {...register("courseOutcomes")}
+            />
+          </div>
+          <div>
+            <Label htmlFor="weeklySyllabusGoals">Weekly syllabus goals</Label>
+            <Textarea id="weeklySyllabusGoals" {...register("weeklySyllabusGoals")} />
+          </div>
+          <div>
+            <Label htmlFor="examType">Exam type</Label>
+            <Input
+              id="examType"
+              placeholder="e.g. In-house academic exam"
+              {...register("examType")}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <Label>Exam formats</Label>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {EXAM_FORMATS.map((fmt) => {
+                const active = examFormats.includes(fmt);
+                return (
+                  <button
+                    key={fmt}
+                    type="button"
+                    onClick={() => toggleExamFormat(fmt)}
+                    aria-pressed={active}
+                    className={cn(
+                      "rounded-full border px-3 py-1 text-sm transition-colors",
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-input bg-card text-muted-foreground hover:bg-muted",
+                    )}
+                  >
+                    {fmt}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <div>
+            <Label htmlFor="cefrDescriptors">CEFR target descriptors</Label>
+            <Textarea id="cefrDescriptors" {...register("cefrDescriptors")} />
+          </div>
+          <div>
+            <Label htmlFor="institutionPriorities">Institution priorities</Label>
+            <Textarea id="institutionPriorities" {...register("institutionPriorities")} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Evidence bank */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Evidence bank (optional)</CardTitle>
+          <CardDescription>
+            Evidence notes make the report more reliable. If no evidence is entered,
+            CourseMap will interpret ratings more cautiously.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]">
+            <Input
+              placeholder={EVIDENCE_PLACEHOLDERS[1]}
+              value={evText}
+              onChange={(e) => setEvText(e.target.value)}
+              aria-label="Evidence text"
+            />
+            <Select
+              value={evType}
+              onChange={(e) => setEvType(e.target.value)}
+              aria-label="Evidence type"
+            >
+              {EVIDENCE_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </Select>
+            <Select
+              value={evSeverity}
+              onChange={(e) => setEvSeverity(e.target.value)}
+              aria-label="Severity"
+            >
+              {EVIDENCE_SEVERITIES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </Select>
+            <Button type="button" variant="outline" onClick={addEvidence}>
+              Add
+            </Button>
+          </div>
+          <Input
+            placeholder="Category (optional, e.g. Communicative value)"
+            value={evCategory}
+            onChange={(e) => setEvCategory(e.target.value)}
+            aria-label="Evidence category"
+          />
+          {evidenceBank.length > 0 && (
+            <ul className="space-y-2">
+              {evidenceBank.map((e) => (
+                <li
+                  key={e.id}
+                  className="flex items-start justify-between gap-3 rounded-md border border-border p-2 text-sm"
+                >
+                  <span>
+                    <span className="mr-2 inline-flex gap-1">
+                      <Badge variant="outline">{e.evidenceType}</Badge>
+                      <Badge variant="muted">{e.severity}</Badge>
+                    </span>
+                    {e.evidenceText}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeEvidence(e.id)}
+                    className="shrink-0 text-xs text-destructive hover:underline"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Decisions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            {mode === "coordinator" ? "Coordinator decision" : "Teacher decision"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className={mode === "coordinator" ? "" : "sm:col-span-2"}>
+            <Label htmlFor="teacherFinalDecision">
+              Teacher / coordinator final decision
+            </Label>
+            <Textarea
+              id="teacherFinalDecision"
+              placeholder="Your own decision about this unit (this stays the teacher's judgment)."
+              {...register("teacherFinalDecision")}
+            />
+          </div>
+          {mode === "coordinator" && (
+            <div>
+              <Label htmlFor="coordinatorRecommendation">Recommendation</Label>
+              <Select
+                id="coordinatorRecommendation"
+                {...register("coordinatorRecommendation")}
+              >
+                <option value="">Let CourseMap suggest…</option>
+                {COORDINATOR_RECOMMENDATIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          )}
         </CardContent>
       </Card>
 

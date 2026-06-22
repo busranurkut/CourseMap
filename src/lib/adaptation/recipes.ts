@@ -1,0 +1,293 @@
+import type { AdaptationRecipe, ProblemTag } from "@/lib/types";
+
+// Static, original adaptation recipe library.
+// Recipes are practical teaching moves inspired by ELT/TESOL principles. They are
+// generic and contain no copyrighted material. sourceAnchors reference keys in
+// literature-basis.ts and are used only as general theoretical support.
+
+export const ADAPTATION_RECIPES: AdaptationRecipe[] = [
+  {
+    id: "add-freer-speaking",
+    title: "Add freer speaking",
+    problemTags: ["Not enough speaking", "Too much controlled practice"],
+    relatedCategories: ["communicative-value", "skills-balance"],
+    whenToUse:
+      "The unit stays on controlled practice and learners rarely produce extended, personalized speech.",
+    timeNeeded: "10–20 minutes",
+    prepLevel: "No prep",
+    skills: ["Speaking"],
+    procedure: [
+      "After the controlled practice, give a discussion question linked to the unit topic.",
+      "Pairs talk for 3–4 minutes, then switch partners and repeat for fluency.",
+      "Take brief whole-class feedback and highlight useful language.",
+    ],
+    teacherNotes: "Keep it low-stakes; focus on fluency before accuracy.",
+    differentiation: "Offer sentence starters to weaker learners.",
+    sourceAnchors: ["Ellis2003", "Brown2007"],
+  },
+  {
+    id: "add-information-gap",
+    title: "Add an information-gap task",
+    problemTags: ["Not enough speaking", "Too much controlled practice"],
+    relatedCategories: ["communicative-value"],
+    whenToUse: "Learners need a genuine reason to communicate.",
+    timeNeeded: "15–25 minutes",
+    prepLevel: "Low prep",
+    skills: ["Speaking", "Listening"],
+    procedure: [
+      "Split the key information into two halves (Student A / Student B).",
+      "Learners ask and answer to complete a shared outcome (table, decision, solution).",
+      "Regroup to compare answers and justify choices.",
+    ],
+    teacherNotes: "Make the outcome concrete so the talk has a purpose.",
+    differentiation: "Provide a partly completed table for weaker pairs.",
+    sourceAnchors: ["Ellis2003", "Nunan2004"],
+  },
+  {
+    id: "add-exam-writing",
+    title: "Add an exam-style writing output",
+    problemTags: ["Not enough writing", "Not exam-aligned"],
+    relatedCategories: ["assessment-alignment", "skills-balance"],
+    whenToUse: "The unit does not prepare learners for the writing assessment.",
+    timeNeeded: "25–30 minutes (some can be homework)",
+    prepLevel: "Low prep",
+    skills: ["Writing"],
+    procedure: [
+      "Show a short prompt that mirrors your exam task type.",
+      "Co-build a quick plan and useful phrases from the unit.",
+      "Learners draft against a 3–4 point success checklist, then peer-review.",
+    ],
+    teacherNotes: "Align the prompt to your real exam to double as exam practice.",
+    differentiation: "Offer a writing frame for weaker learners.",
+    sourceAnchors: ["Nation2009", "Richards2001"],
+  },
+  {
+    id: "add-vocabulary-recycling",
+    title: "Add vocabulary recycling",
+    problemTags: ["Not enough vocabulary recycling"],
+    relatedCategories: ["vocab-grammar"],
+    whenToUse: "Target vocabulary appears once and is not reused.",
+    timeNeeded: "10–15 minutes",
+    prepLevel: "No prep",
+    skills: ["Vocabulary", "Speaking"],
+    procedure: [
+      "Select 6–8 key words from the unit.",
+      "Learners use them in a short personalized task (story, opinion, problem-solving).",
+      "Revisit the words in the next lesson's warmer.",
+    ],
+    teacherNotes: "Spaced reuse supports retention.",
+    differentiation: "Give weaker learners the words with example collocations.",
+    sourceAnchors: ["Nation2013"],
+  },
+  {
+    id: "add-pre-reading-support",
+    title: "Add pre-reading support",
+    problemTags: ["Weak reading support", "Too difficult"],
+    relatedCategories: ["text-quality", "level-cognitive-load"],
+    whenToUse: "Learners struggle with the reading text or its vocabulary load.",
+    timeNeeded: "10 minutes",
+    prepLevel: "Low prep",
+    skills: ["Reading", "Vocabulary"],
+    procedure: [
+      "Pre-teach 4–6 key words and activate background knowledge with a quick prediction task.",
+      "Set one easy gist question before detailed reading.",
+    ],
+    teacherNotes: "Reducing load before reading improves comprehension.",
+    differentiation: "Provide a glossary for the densest paragraph.",
+    sourceAnchors: ["Grabe2009", "Nation2013"],
+  },
+  {
+    id: "add-post-reading-discussion",
+    title: "Add a post-reading discussion",
+    problemTags: ["Too much controlled practice", "Topic is not engaging"],
+    relatedCategories: ["communicative-value", "text-quality"],
+    whenToUse: "Follow-up tasks only check comprehension.",
+    timeNeeded: "10–15 minutes",
+    prepLevel: "No prep",
+    skills: ["Speaking", "Reading"],
+    procedure: [
+      "Pose 2–3 inference or opinion questions about the text.",
+      "Learners discuss in small groups, then share with the class.",
+    ],
+    teacherNotes: "Move learners beyond locating facts toward response and evaluation.",
+    differentiation: "Provide opinion language for weaker groups.",
+    sourceAnchors: ["Grabe2009", "Tomlinson2011"],
+  },
+  {
+    id: "simplify-dense-input",
+    title: "Simplify dense input",
+    problemTags: ["Too difficult"],
+    relatedCategories: ["level-cognitive-load", "text-quality"],
+    whenToUse: "The input is too dense or abstract for the level.",
+    timeNeeded: "Prep + 5 minutes in class",
+    prepLevel: "Medium prep",
+    skills: ["Reading", "Listening"],
+    procedure: [
+      "Chunk the input into shorter parts with a task after each chunk.",
+      "Gloss or pre-teach the highest-load items.",
+      "Add a graphic organizer to structure comprehension.",
+    ],
+    teacherNotes: "Keep the original aims; reduce processing load, not content value.",
+    differentiation: "Offer a shorter version to learners who need it.",
+    sourceAnchors: ["Nation2013", "Skehan1998"],
+  },
+  {
+    id: "localize-topic",
+    title: "Localize the topic",
+    problemTags: ["Topic is not engaging", "Topic does not fit my learners"],
+    relatedCategories: ["engagement", "cultural-inclusive"],
+    whenToUse: "The topic feels distant from learners' lives.",
+    timeNeeded: "5–10 minutes",
+    prepLevel: "Low prep",
+    skills: ["Speaking"],
+    procedure: [
+      "Reframe the task with a local example relevant to your learners.",
+      "Ask learners to bring their own examples or experiences.",
+    ],
+    teacherNotes: "Personal relevance increases engagement.",
+    differentiation: "Allow first-language brainstorming before English output.",
+    sourceAnchors: ["Tomlinson2011", "MishanTimmis2015"],
+  },
+  {
+    id: "add-mixed-level-support",
+    title: "Add mixed-level support",
+    problemTags: ["Mixed levels hard to teach", "Too difficult", "Too easy"],
+    relatedCategories: ["adaptability", "level-cognitive-load"],
+    whenToUse: "A single task does not fit the range of levels in the room.",
+    timeNeeded: "Prep + flexible in class",
+    prepLevel: "Medium prep",
+    skills: ["Reading", "Writing", "Speaking"],
+    procedure: [
+      "Offer tiered versions of the same task (core + extension).",
+      "Use flexible grouping so stronger learners support others.",
+    ],
+    teacherNotes: "Keep one shared outcome so the class stays together.",
+    differentiation: "This recipe is itself a differentiation move.",
+    sourceAnchors: ["McGrath2002", "Tomlinson2013"],
+  },
+  {
+    id: "shorten-long-unit",
+    title: "Shorten a long unit",
+    problemTags: ["Too long for available time"],
+    relatedCategories: ["adaptability", "task-sequencing"],
+    whenToUse: "The unit cannot be covered in the available time.",
+    timeNeeded: "Planning only",
+    prepLevel: "Low prep",
+    skills: [],
+    procedure: [
+      "Identify the core outcome and the tasks that serve it.",
+      "Cut or set for homework the lowest-value controlled practice.",
+      "Keep input and at least one freer-production stage.",
+    ],
+    teacherNotes: "Protect production time when cutting.",
+    differentiation: "Set optional extension for fast finishers.",
+    sourceAnchors: ["McGrath2002", "McDonoughShawMasuhara2013"],
+  },
+  {
+    id: "add-no-prep-extension",
+    title: "Add a no-prep communicative extension",
+    problemTags: ["Not enough speaking", "Needs a better final task"],
+    relatedCategories: ["communicative-value"],
+    whenToUse: "You need a fast extension with no materials.",
+    timeNeeded: "5–10 minutes",
+    prepLevel: "No prep",
+    skills: ["Speaking"],
+    procedure: [
+      "Turn the unit content into a quick decision, ranking, or problem-solving task.",
+      "Pairs decide, then justify to another pair.",
+    ],
+    teacherNotes: "Great as an on-the-spot adaptation.",
+    differentiation: "Provide a model opinion for weaker learners.",
+    sourceAnchors: ["Ellis2003", "Brown2007"],
+  },
+  {
+    id: "add-listening-strategy",
+    title: "Add listening strategy support",
+    problemTags: ["Weak listening support", "Too difficult"],
+    relatedCategories: ["text-quality", "skills-balance"],
+    whenToUse: "Listening tasks only test comprehension and learners feel lost.",
+    timeNeeded: "10–15 minutes",
+    prepLevel: "Low prep",
+    skills: ["Listening"],
+    procedure: [
+      "Pre-teach key words and set a clear gist task first.",
+      "Play once for gist, then again for detail; let learners compare answers.",
+      "Briefly discuss what helped them understand (strategy reflection).",
+    ],
+    teacherNotes: "Build the listening process, not just test the product.",
+    differentiation: "Provide a partial transcript for the second listen.",
+    sourceAnchors: ["Field2008", "VandergriftGoh2012"],
+  },
+  {
+    id: "meaningful-grammar",
+    title: "Turn controlled grammar into meaningful practice",
+    problemTags: ["Grammar is too isolated", "Too much controlled practice"],
+    relatedCategories: ["vocab-grammar", "communicative-value"],
+    whenToUse: "Grammar is practised in isolation from meaning and use.",
+    timeNeeded: "10–15 minutes",
+    prepLevel: "Low prep",
+    skills: ["Grammar", "Speaking"],
+    procedure: [
+      "Keep a short controlled stage for form.",
+      "Add a personalized task where learners must use the target structure to convey real meaning.",
+    ],
+    teacherNotes: "Balance form, meaning, and use.",
+    differentiation: "Offer a model sentence stem.",
+    sourceAnchors: ["Nation2009", "Brown2007"],
+  },
+  {
+    id: "add-exit-ticket",
+    title: "Add an exit ticket",
+    problemTags: ["Needs a better final task"],
+    relatedCategories: ["assessment-alignment", "task-sequencing"],
+    whenToUse: "You want a quick check of learning and a sense of closure.",
+    timeNeeded: "5 minutes",
+    prepLevel: "No prep",
+    skills: ["Writing"],
+    procedure: [
+      "In the last 5 minutes, learners write one thing they learned and one question.",
+      "Use responses to plan the next lesson's warmer.",
+    ],
+    teacherNotes: "Lightweight formative assessment.",
+    differentiation: "Allow drawing or first-language notes if needed.",
+    sourceAnchors: ["Graves2000", "CEFR2020"],
+  },
+  {
+    id: "add-final-production",
+    title: "Add a final production task",
+    problemTags: [
+      "Needs a better final task",
+      "Not enough speaking",
+      "Not enough writing",
+    ],
+    relatedCategories: ["communicative-value", "task-sequencing"],
+    whenToUse: "The unit ends on controlled practice with no clear output.",
+    timeNeeded: "20–30 minutes",
+    prepLevel: "Low prep",
+    skills: ["Speaking", "Writing"],
+    procedure: [
+      "Define a concrete outcome (a recommendation, a short text, a presentation).",
+      "Learners plan, then produce, reusing the unit's target language.",
+      "Share outcomes and give focused feedback.",
+    ],
+    teacherNotes: "A clear end task gives the unit purpose and recycles language.",
+    differentiation: "Provide a planning frame and useful phrases.",
+    sourceAnchors: ["Ellis2003", "Nunan2004", "Nation2013"],
+  },
+];
+
+/** Find recipes that match any of the given problem tags. */
+export function recipesForProblemTags(tags: ProblemTag[]): AdaptationRecipe[] {
+  if (!tags.length) return [];
+  const wanted = new Set(tags);
+  return ADAPTATION_RECIPES.filter((r) => r.problemTags.some((t) => wanted.has(t)));
+}
+
+/** Find recipes related to a framework category id. */
+export function recipesForCategory(categoryId: string): AdaptationRecipe[] {
+  return ADAPTATION_RECIPES.filter((r) => r.relatedCategories.includes(categoryId));
+}
+
+export function recipeById(id: string): AdaptationRecipe | undefined {
+  return ADAPTATION_RECIPES.find((r) => r.id === id);
+}

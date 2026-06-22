@@ -74,13 +74,19 @@ export default function HomePage() {
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
               <Link href="/evaluations/new">
-                Start evaluation <ArrowRight className="h-4 w-4" />
+                Start full evaluation <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link href="/literature">See the literature basis</Link>
+              <Link href="/diagnose">Fix a unit quickly</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/recipes">Browse adaptation recipes</Link>
             </Button>
           </div>
+          <p className="text-sm font-medium text-foreground">
+            Teacher judgment first. AI support second.
+          </p>
         </div>
 
         <Card>
@@ -117,6 +123,55 @@ export default function HomePage() {
             </CardContent>
           </Card>
         ))}
+      </section>
+
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold tracking-tight">
+            Why not just ask AI directly?
+          </h2>
+          <p className="max-w-3xl text-muted-foreground">
+            You can ask AI directly, but CourseMap gives teachers a structured and
+            documented process. Instead of relying on a single open-ended prompt,
+            CourseMap guides teachers through a literature-grounded evaluation framework,
+            records their own ratings and evidence notes, and then uses AI only to support
+            interpretation and adaptation planning. The teacher remains the evaluator. The
+            AI helps organize the evaluation into a practical report, adaptation plan, and
+            supplementary tasks.
+          </p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              title: "Structured",
+              desc: "Uses a consistent TEFL/TESOL evaluation framework.",
+            },
+            {
+              title: "Teacher-led",
+              desc: "Your ratings and evidence notes guide the report.",
+            },
+            {
+              title: "Documented",
+              desc: "Export reports for planning, appraisal, or coordination.",
+            },
+            {
+              title: "Actionable",
+              desc: "Turns evaluation into concrete adaptation steps and supplementary tasks.",
+            },
+          ].map((c) => (
+            <Card key={c.title}>
+              <CardHeader>
+                <CardTitle className="text-base">{c.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">{c.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <p className="text-sm font-medium text-primary">
+          Not just AI feedback. A structured evaluation-to-adaptation workflow.
+        </p>
       </section>
 
       <EthicsNote />

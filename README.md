@@ -1,10 +1,29 @@
 # CourseMap: Coursebook Evaluation and Adaptation Dashboard
 
 > From coursebook evaluation to actionable adaptation.
+> **Teacher judgment first. AI support second.**
 
-CourseMap helps English teachers, materials developers, and prep-school
-coordinators evaluate coursebook units and turn evaluation results into concrete
-adaptation plans.
+[![CI](https://github.com/busranurkut/coursemap/actions/workflows/ci.yml/badge.svg)](https://github.com/busranurkut/coursemap/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+![TEFL / TESOL](https://img.shields.io/badge/TEFL%2FTESOL-materials%20evaluation-0b7285)
+
+**Live demo:** https://coursemap-eight.vercel.app
+
+CourseMap is a literature-grounded, **teacher-led** coursebook evaluation and
+adaptation dashboard. Teachers evaluate coursebook units, enter their own ratings and
+evidence notes, and CourseMap turns those inputs into structured, AI-supported
+interpretation, adaptation plans, supplementary tasks, lesson plans, and coordinator
+summaries. The teacher is the evaluator; AI only helps organize, interpret, and adapt.
+
+## Why not just ask AI directly?
+
+You can ask AI directly, but CourseMap gives teachers a **structured and documented
+process**. Instead of a single open-ended prompt, it guides teachers through a
+literature-grounded framework, records their ratings and evidence notes, and uses AI
+only to support interpretation and adaptation planning — keeping the teacher in
+control. Not just AI feedback: a structured evaluation-to-adaptation workflow.
 
 ## Why this project matters
 
@@ -25,9 +44,25 @@ final judgment.
 - **AI-supported adaptation report** — uses the Anthropic API when a key is configured.
 - **Deterministic fallback report** — works fully offline with no API key.
 - **Supplementary task generation** — at least two ready-made, original task drafts.
-- **Exportable report** — download as Markdown or print to PDF.
-- **Evaluation history** — saved locally in SQLite via Prisma.
+- **Three evaluation modes** — Quick evaluation, Full evaluation, and Coordinator review.
+- **Problem-first mode** (`/diagnose`) — "Fix a weak unit quickly" by selecting problems.
+- **Separated report tabs** — Teacher evaluation vs AI-supported interpretation, with a confidence level.
+- **Before/After adaptation plan** — concrete original→adapted stages with rationale.
+- **Syllabus/exam alignment checker** — supported, weakly supported, and missing exam prep.
+- **Adaptation recipes** (`/recipes`) — a filterable library of classroom-ready moves.
+- **Lesson plan export** — adapted lesson plan with a print-friendly route.
+- **Evidence bank** — tag evidence snippets that strengthen the interpretation.
+- **Coordinator summary** — formal recommendation for meetings, appraisal, accreditation.
+- **Exportable report** — full report or per-section Markdown, plus print to PDF.
+- **Evaluation history** — saved in the configured database via Prisma.
+- **Dark mode**, rate limiting, security headers, and unit tests.
 - **Ethical copyright guidance** — built into the UI and docs.
+
+## Screenshots
+
+_Screenshots coming soon._ To capture them, run the app locally (`npm run dev`) and
+save images to `public/screenshots/` as `homepage.png`, `new-evaluation.png`,
+`report-tabs.png`, `recipes.png`, and `literature-basis.png`, then reference them here.
 
 ## Tech stack
 
@@ -35,12 +70,9 @@ final judgment.
 - **Tailwind CSS** with shadcn/ui-style components (Radix primitives)
 - **React Hook Form** + **Zod** for forms and validation
 - **Recharts** for score visualization
-- **Prisma** + **SQLite** for local persistence
+- **Prisma** + **PostgreSQL** (a free [Neon](https://neon.tech) database works for local and production)
 - **@anthropic-ai/sdk** for AI report generation (optional)
-
-## Screenshots
-
-_Screenshots coming soon._
+- **Vitest** for unit tests; **Prettier**, **ESLint**, **husky** for quality
 
 ## Installation
 
@@ -86,7 +118,9 @@ built-in fallback generator works for everyone.
 | `npm start`        | Run the production build                  |
 | `npm run lint`     | ESLint                                    |
 | `npm run typecheck`| TypeScript type checking                 |
-| `npm run db:push`  | Create/update the SQLite schema          |
+| `npm run db:push`  | Push the Prisma schema to the database    |
+| `npm run db:migrate`| Apply Prisma migrations (production)      |
+| `npm test`         | Run unit tests (Vitest)                   |
 | `npm run db:seed`  | Insert a fictional sample evaluation     |
 
 ## Environment variables
@@ -95,7 +129,7 @@ See [`.env.example`](.env.example).
 
 | Variable            | Required | Description                                                                 |
 | ------------------- | -------- | --------------------------------------------------------------------------- |
-| `DATABASE_URL`      | Yes      | SQLite connection string, e.g. `file:./dev.db`.                             |
+| `DATABASE_URL`      | Yes      | PostgreSQL connection string (e.g. a free Neon database).                   |
 | `ANTHROPIC_API_KEY` | No       | If set, reports are generated with the Anthropic API. If empty, the fallback generator is used. |
 | `ANTHROPIC_MODEL`   | No       | Override the Claude model (defaults to a current Claude model).             |
 
@@ -147,14 +181,22 @@ checklist. See [`docs/LITERATURE_BASIS.md`](docs/LITERATURE_BASIS.md) and the in
 
 See [`docs/ETHICS_AND_COPYRIGHT.md`](docs/ETHICS_AND_COPYRIGHT.md).
 
+## Known limitations
+
+- **No user accounts yet** — a single shared database; not multi-tenant.
+- The in-memory **rate limiter** is per-instance (best-effort on serverless).
+- **AI is optional**: without `ANTHROPIC_API_KEY`, reports use the deterministic
+  template generator. The fallback is intentionally cautious and never gives a verdict.
+- Problem-first (`/diagnose`) mode is a fast diagnosis, not a full evaluation.
+- Some syllabus/exam free-text fields are summarized into the report rather than
+  fully round-tripped on edit.
+
 ## Roadmap
 
 - Photo upload + OCR for unit content
 - Side-by-side coursebook comparison
-- Syllabus map and exam alignment map
-- Institution-wide dashboard
-- Multi-user team review
-- Additional frameworks
+- Institution-wide dashboard and multi-user team review (with accounts)
+- More evaluation frameworks
 - Data export for research
 
 See [`docs/ROADMAP.md`](docs/ROADMAP.md).

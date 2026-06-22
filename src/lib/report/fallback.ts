@@ -8,6 +8,15 @@ import type {
 import { COURSEMAP_CORE } from "@/lib/frameworks/coursemap-core";
 import { sourceLabels } from "@/lib/frameworks/literature-basis";
 import { computeScoreProfile, scoreLabel } from "@/lib/scoring/score";
+import {
+  computeConfidence,
+  selectRecipes,
+  buildBeforeAfterPlan,
+  buildSyllabusExamAlignment,
+  buildLessonPlan,
+  buildCoordinatorSummary,
+  buildTeacherEvaluationSummary,
+} from "@/lib/report/sections";
 
 // Deterministic, template-based report generator.
 // Used when no ANTHROPIC_API_KEY is configured, or when the user opts out of AI.
@@ -214,7 +223,23 @@ export function generateFallbackReport(input: EvaluationInput): GeneratedReport 
     "This evaluation reflects the ratings and notes you entered; it is decision support, not an absolute verdict.",
     "Supplementary tasks are original drafts and should be reviewed and adapted before classroom use.",
     "No coursebook text is reproduced; the unit summary you entered is used only to inform the analysis.",
+    "This report was generated without an AI model; the interpretation is template-based and intentionally cautious.",
   ];
+
+  const tasks = supplementaryTasks(input);
+  const confidence = computeConfidence(input, profile);
+  const recipes = selectRecipes(input, profile);
+
+  const aiSupportedInterpretation =
+    profile.overallScore > 0
+      ? `Reading the teacher's ratings together, the unit looks ${
+          profile.overallScore < 3
+            ? "as though it needs substantial adaptation"
+            : profile.overallScore < 3.7
+              ? "broadly usable with targeted adaptation"
+              : "a good fit"
+        } for this context. ${contextFitJudgment} The patterns below organize the teacher's evaluation into next steps; they do not replace professional judgment.`
+      : "Add ratings to receive a template-based interpretation of your evaluation.";
 
   return {
     overview,
@@ -223,11 +248,24 @@ export function generateFallbackReport(input: EvaluationInput): GeneratedReport 
     mainWeaknesses,
     categoryFeedback,
     adaptationPlan,
-    supplementaryTasks: supplementaryTasks(input),
+    supplementaryTasks: tasks,
     implementationNotes,
     limitations,
     scoreProfile: profile,
     generatedBy: "fallback",
+
+    // v0.3 sections
+    teacherEvaluationSummary: buildTeacherEvaluationSummary(input, profile),
+    aiSupportedInterpretation,
+    confidenceLevel: confidence.level,
+    confidenceSummary: confidence.summary,
+    beforeAfterPlan: buildBeforeAfterPlan(input, profile),
+    syllabusExamAlignment: buildSyllabusExamAlignment(input, profile),
+    adaptationRecipesUsed: recipes.map((r) => ({ id: r.id, title: r.title })),
+    lessonPlan: buildLessonPlan(input, profile, tasks),
+    coordinatorSummary: buildCoordinatorSummary(input, profile),
+    mode: input.mode ?? "full",
+    problemTags: input.problemTags ?? [],
   };
 }
 
